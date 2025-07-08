@@ -10,8 +10,6 @@ const __dirname = path.dirname(__filename);
 
 configDotenv({ path: path.resolve(__dirname, `../.env.supabase`) });
 
-console.log("Supabase URL:", process.env.SUPABASE_URL);
-
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_ANON_KEY
