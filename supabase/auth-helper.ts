@@ -2,11 +2,9 @@ import { AppState } from "react-native";
 // import "react-native-url-polyfill/auto";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient, processLock } from "@supabase/supabase-js";
-import Constants from "expo-constants";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@env";
 
-const url = SUPABASE_URL;
-const anonKey = SUPABASE_ANON_KEY;
+const url: string = process.env.EXPO_PUBLIC_SUPABASE_URL || "";
+const anonKey: string = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || "";
 
 const customStorageAdapter = {
   getItem: (key: string) => AsyncStorage.getItem(key),

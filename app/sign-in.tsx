@@ -5,7 +5,7 @@ import { supabase } from "../supabase/auth-helper";
 import Auth from "../components/Auth";
 import { Session } from "@supabase/supabase-js";
 
-export default function Index() {
+export default function SignInScreen() {
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
