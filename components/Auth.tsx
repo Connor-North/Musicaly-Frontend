@@ -3,7 +3,6 @@ import { Alert, StyleSheet, View } from "react-native";
 import { supabase } from "../supabase/auth-helper";
 // import { Button, Input } from "@ui-kitten/components";
 import { Button, TextInput, Text } from "react-native";
-import { signupStudent } from "../supabase/signupStudent";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -36,6 +35,11 @@ export default function Auth() {
     } = await supabase.auth.signUp({
       email: email,
       password: password,
+      options: {
+        data: {
+          name: name,
+        },
+      },
     });
 
     if (error) Alert.alert(error.message);
@@ -43,24 +47,6 @@ export default function Auth() {
       Alert.alert("Please check your inbox for email verification!");
     setLoading(false);
   }
-
-  // const handleSignup = async () => {
-  //   setLoading(true);
-  //   setError(null);
-  //   try {
-  //     const result = await signupStudent(email, password);
-  //     if (result.success) {
-  //       // onSignupSuccess(result.user); Route to home page
-  //     } else {
-  //       setError(result.error);
-  //     }
-  //   } catch (err) {
-  //     setError("An unexpected error occurred");
-  //     console.error(err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   return (
     <View style={styles.container}>
