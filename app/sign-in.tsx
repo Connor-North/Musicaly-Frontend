@@ -7,6 +7,7 @@ import { Session } from "@supabase/supabase-js";
 
 export default function Index() {
   const [session, setSession] = useState<Session | null>(null);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -15,11 +16,11 @@ export default function Index() {
       setSession(session);
     });
   }, []);
+
   return (
     <View>
       <Auth />
       {session && session.user && <Text>{session.user.id}</Text>}
-      <Text>Hello</Text>
     </View>
   );
 }

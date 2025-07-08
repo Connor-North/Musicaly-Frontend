@@ -6,21 +6,15 @@ import Constants from "expo-constants";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@env";
 
 const url = SUPABASE_URL;
-const anonkey = SUPABASE_ANON_KEY;
-
-console.log(url);
+const anonKey = SUPABASE_ANON_KEY;
 
 const customStorageAdapter = {
-  getItem: (key) => AsyncStorage.getItem(key),
-
-  setItem: (key, value) => AsyncStorage.setItem(key, value),
-
-  removeItem: (key) => AsyncStorage.removeItem(key),
+  getItem: (key: string) => AsyncStorage.getItem(key),
+  setItem: (key: string, value: string) => AsyncStorage.setItem(key, value),
+  removeItem: (key: string) => AsyncStorage.removeItem(key),
 };
 
-console.log(url);
-
-export const supabase = createClient(url, anonkey, {
+export const supabase = createClient(url, anonKey, {
   auth: {
     storage: customStorageAdapter,
     autoRefreshToken: true,
@@ -37,14 +31,3 @@ AppState.addEventListener("change", (state) => {
     supabase.auth.stopAutoRefresh();
   }
 });
-
-// import { config as configDotenv } from "dotenv";
-// import path from "path";
-// import { fileURLToPath } from "url";
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-
-// // const env = process.env.supabase;
-
-// configDotenv({ path: path.resolve(__dirname, `../.env.supabase`) });
