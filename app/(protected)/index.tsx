@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
+import { handleSignOut } from "../../supabase/supabase-signout";
 
 export default function Index() {
   return (
@@ -7,6 +8,7 @@ export default function Index() {
         <Text style={styles.title}>Hello Protected World</Text>
         <Text style={styles.subtitle}>This is the first page of your app.</Text>
       </View>
+      <Button title={"Sign Out"} onPress={() => handleSignOut} />
     </View>
   );
 }
