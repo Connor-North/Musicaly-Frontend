@@ -11,8 +11,6 @@ export default function Index() {
         justifyContent: "center",
         alignItems: "center",
       }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </SafeAreaView>
+    ></SafeAreaView>
   );
 }
