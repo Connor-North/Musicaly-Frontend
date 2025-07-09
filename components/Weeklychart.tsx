@@ -21,17 +21,7 @@ export default function WeeklyChart() {
   };
 
   const ringChartConfig = {
-    backgroundGradientFrom: "#000000",
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: "#08130D",
-    backgroundGradientToOpacity: 0,
-    color: (opacity = 1) => `rgb(2, 86, 255, ${opacity})`,
-    strokeWidth: 2, // optional, default 3
-    fillShadowGradient: "#0256FF",
-    fillShadowOpacity: 1,
-    fillShadowGradientTo: "#0256FF",
-    fillShadowGradientFromOpacity: 1,
-    fillShadowGradientToOpacity: 1,
+    color: (opacity = 1) => `rgba(2, 86, 255, ${opacity})`, // Fixed
   };
 
   const barData = {
@@ -64,7 +54,7 @@ export default function WeeklyChart() {
         <BarChart
           //style={graphStyle}
           data={barData}
-          width={screenWidth * 0.7}
+          width={screenWidth * 0.65}
           height={200}
           withInnerLines={false}
           // yAxisSuffix=""
@@ -75,10 +65,10 @@ export default function WeeklyChart() {
 
         <ProgressChart
           data={progressData}
-          width={screenWidth * 0.3}
+          width={screenWidth * 0.25}
           height={200}
-          strokeWidth={16}
-          radius={60}
+          strokeWidth={6}
+          radius={40}
           chartConfig={ringChartConfig}
           hideLegend={true}
         />
