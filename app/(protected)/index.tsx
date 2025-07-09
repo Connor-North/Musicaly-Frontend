@@ -1,9 +1,11 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import { handleSignOut } from "../../supabase/supabase-signout";
+import WeeklyChart from "@/components/Weeklychart";
 
 export default function Index() {
   return (
     <View style={styles.container}>
+      <WeeklyChart />
       <View style={styles.main}>
         <Text style={styles.title}>Hello Protected World</Text>
         <Text style={styles.subtitle}>This is the first page of your app.</Text>
