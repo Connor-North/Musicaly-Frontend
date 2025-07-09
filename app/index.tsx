@@ -4,13 +4,14 @@ import React from "react";
 import { Layout, Spinner } from "@ui-kitten/components";
 
 export default function Index() {
-  return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    ></SafeAreaView>
-  );
+  return <SafeAreaView style={styles.container}></SafeAreaView>;
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
+  },
+});
