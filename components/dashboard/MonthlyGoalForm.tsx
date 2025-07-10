@@ -3,12 +3,12 @@ import { Text, Input, Button } from "@ui-kitten/components";
 import { SafeAreaView, FlatList, StyleSheet, View } from "react-native";
 
 interface Goal {
-  id: string;
+  id?: string;
   student_id: string;
   goal_description: string;
-  goal_date: string;
-  goal_status: number;
-  created_at: string;
+  goal_date?: string;
+  goal_status?: number;
+  created_at?: string;
 }
 
 const [data, setData] = useState<Goal[]>([
@@ -39,7 +39,7 @@ const [data, setData] = useState<Goal[]>([
 ]);
 
 export default function MonthlyGoalsForm() {
-  // NOTE - do I need to count?
+  // NOTE - do I need to count goal count?
   const [goalCount, setGoalCount] = useState(data.length);
   const [newGoals, setNewGoals] = useState<string[]>(
     Array(5 - data.length).fill("")
@@ -53,19 +53,28 @@ export default function MonthlyGoalsForm() {
 
   // Handler for adding a new goal
   const addGoal = (index: number) => {
-    const goalText = newGoals[index].trim();
-    if (!goalText) return alert("Please enter a goal");
+    const goalText: string = newGoals[index].trim();
+    if (goalText.length < 5) {
+      alert("Please write at least 5 characters");
+      return;
+    }
 
-    const newGoal = {
-      id: String(Date.now()),
+    // Build complete newGoal matching your Goal interface
+    const newGoal: Goal = {
+      student_id: "some-student-id", // FIXME - replace with actual value, extract from data, or from session object of Supabase session?
       goal_description: goalText,
+      goal_date: new Date().toISOString(), //FIXME - Is this valid date format for Supabase TimeStampZ - check vs reference object
+      goal_status: 0, // Set at 0, as new goal will be unstarted...?
+      created_at: new Date().toISOString(), //FIXME - Is this valid date format for Supabase TimeStampZ
     };
 
-    setData([...data, newGoals]);
+    setData([...data, newGoal]);
 
     const updatedNewGoals = [...newGoals];
     updatedNewGoals.splice(index, 1);
     setNewGoals(updatedNewGoals);
+
+    //NOTE - Consider - handle logic here for updating on Supabase? Or render all locally and handle elsewhere?
   };
 
   return (
@@ -79,7 +88,7 @@ export default function MonthlyGoalsForm() {
         renderItem={({ item }) => (
           <Text style={styles.item}>{item.goal_description}</Text>
         )}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.student_id}
         ItemSeparatorComponent={() => (
           <View style={{ height: 1, backgroundColor: "#ccc" }} />
         )}
