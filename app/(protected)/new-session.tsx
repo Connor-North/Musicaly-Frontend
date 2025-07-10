@@ -1,13 +1,20 @@
-import { Text } from 'react-native';
+import { Text, View, TextInput, StyleSheet, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet } from 'react-native';
 import { Button, OverflowMenu, MenuItem, Input } from '@ui-kitten/components';
 import React from 'react';
 // const HeartIcon = (props): IconElement => <Icon {...props} name="heart" />;
 export default function NewSession() {
   const [menuVisible, setMenuVisible] = React.useState(false);
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [title, setTitle] = React.useState('');
+  const [artist, setArtist] = React.useState('');
+
   const toggleMenu = (): void => {
     setMenuVisible(!menuVisible);
+  };
+
+  const toggleModal = (): void => {
+    setModalVisible(!modalVisible);
   };
 
   const [value, setValue] = React.useState('');
@@ -39,9 +46,35 @@ export default function NewSession() {
         anchor={renderMenuButton}
         onBackdropPress={toggleMenu}
       >
-        <MenuItem title="Repertoire" />
-        <MenuItem title="Technical Exercises" />
+        <MenuItem title="Repertoire" onPress={toggleModal} />
+        <MenuItem title="Technical Exercises" onPress={toggleModal} />
       </OverflowMenu>
+
+      <Modal
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View
+          style={styles.mainView}
+          className="flex-1 items-center justify-center"
+        >
+          <View style={styles.view} className="p-12 rounded-lg bg-white">
+            <TextInput
+              placeholder={'title'}
+              onChangeText={(text) => setTitle(text)}
+              value={title}
+            />
+            <TextInput
+              placeholder={'artist'}
+              onChangeText={(text) => setArtist(text)}
+              value={artist}
+            />
+            <Button onPress={() => setModalVisible(false)}>Create</Button>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -56,5 +89,13 @@ const styles = StyleSheet.create({
     width: '75%',
     position: 'absolute',
     marginTop: '5%',
+  },
+  view: {
+    position: 'relative',
+    padding: '15%',
+  },
+  mainView: {
+    justifyContent: 'center',
+    flex: 1,
   },
 });
