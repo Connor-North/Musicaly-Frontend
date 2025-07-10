@@ -2,9 +2,12 @@ import React from "react";
 import { BarChart, ProgressChart } from "react-native-chart-kit";
 import { View, Dimensions, StyleSheet, ViewProps } from "react-native";
 import { Card, Layout, Text } from "@ui-kitten/components";
+import * as Progress from "react-native-progress";
+import StarRating from "./StarRating";
 
 export default function WeeklyChart() {
   const screenWidth = Dimensions.get("window").width;
+  const screenHeight = Dimensions.get("window").height;
 
   const chartConfig = {
     backgroundGradientFrom: "#1E2923",
@@ -43,39 +46,35 @@ export default function WeeklyChart() {
 
   return (
     <>
-      <View
-        style={
-          (styles.container,
-          {
-            flexDirection: "column",
-          })
-        }
-      >
+      <View style={[styles.container, { flexDirection: "column" }]}>
         <Layout style={styles.topContainer} level="1">
           <Card style={styles.card}>
-            <BarChart
-              //style={graphStyle}
-              data={barData}
-              width={screenWidth * 0.9}
-              height={150}
-              withInnerLines={false}
-              // yAxisSuffix=""
-              chartConfig={chartConfig}
-              verticalLabelRotation={0}
-              fromZero={true}
-            />
+            <View style={styles.cardContent}>
+              <BarChart
+                //style={graphStyle}
+                data={barData}
+                width={screenWidth * 0.9}
+                height={screenHeight * 0.3}
+                withInnerLines={false}
+                yAxisLabel=""
+                yAxisSuffix=""
+                chartConfig={chartConfig}
+                verticalLabelRotation={0}
+                fromZero={true}
+              />
+            </View>
           </Card>
           <Card style={styles.card}>
-            <ProgressChart
-              data={progressData}
-              width={screenWidth * 0.9}
-              height={100}
-              strokeWidth={8}
-              radius={25}
-              chartConfig={ringChartConfig}
-              hideLegend={false}
-              withCustomBarColorFromData
-            />
+            <View style={styles.cardContent}>
+              <Progress.Bar
+                progress={0.4}
+                width={screenWidth * 0.9}
+                animated={false}
+                color={"#0256FF"}
+                unfilledColor={"#b6cdff"}
+              />
+              <StarRating />
+            </View>
           </Card>
         </Layout>
       </View>
@@ -85,25 +84,23 @@ export default function WeeklyChart() {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 0,
-    padding: 0,
-  },
-  verticallySpaced: {
-    paddingTop: 1,
-    paddingBottom: 4,
-    // alignSelf: "stretch",
-  },
-  mt0: {
-    marginTop: 0,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   topContainer: {
     flexDirection: "column",
-    alignSelf: "baseline",
-    alignItems: "flex-start",
-    // justifyContent: "space-between",
+    alignItems: "center",
+    justifyContent: "center",
   },
   card: {
-    flex: 1,
-    margin: 2,
+    width: "90%",
+    marginVertical: 10,
+    padding: 15,
+  },
+  cardContent: {
+    width: "90%",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
