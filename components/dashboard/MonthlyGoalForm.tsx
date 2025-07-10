@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { Text, Input, Button } from "@ui-kitten/components";
+import { Card, Text, Input, Button, ProgressBar } from "@ui-kitten/components";
 import { SafeAreaView, FlatList, StyleSheet, View } from "react-native";
 
 interface Goal {
   id?: string;
   student_id: string;
   goal_description: string;
-  goal_date?: string;
-  goal_status?: number;
-  created_at?: string;
+  goal_date: string;
+  goal_status: number;
+  created_at: string;
 }
 
 const [data, setData] = useState<Goal[]>([
@@ -18,7 +18,7 @@ const [data, setData] = useState<Goal[]>([
     goal_description: "play all 4 grade pieces to 75% tempo",
     goal_date: "2025-08-21T12:04:28.149551+00:00",
     goal_status: 2,
-    created_at: "2025-07-05T12:04:28.149551+00:00",
+    created_at: "2025-07-05T12:04:29.149551+00:00",
   },
   {
     id: "dd59c8c7-a8a1-4b65-9db2-5d787ab1dd4d",
@@ -26,7 +26,7 @@ const [data, setData] = useState<Goal[]>([
     goal_description: "play section B invention no. 8 LH only",
     goal_date: "2025-07-12T12:04:28.149551+00:00",
     goal_status: 4,
-    created_at: "2025-07-05T12:04:28.149551+00:00",
+    created_at: "2025-07-05T12:04:27.149551+00:00",
   },
   {
     id: "dd59c8c7-a8a1-4b65-9db2-5d787ab1dd4d",
@@ -79,38 +79,39 @@ export default function MonthlyGoalsForm() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.header}>
-        You have set {data.length} goals this month
-      </Text>
-
-      <FlatList
-        data={data}
-        renderItem={({ item }) => (
-          <Text style={styles.item}>{item.goal_description}</Text>
-        )}
-        keyExtractor={(item) => item.student_id}
-        ItemSeparatorComponent={() => (
-          <View style={{ height: 1, backgroundColor: "#ccc" }} />
-        )}
-        ListHeaderComponent={() => (
-          <Text style={styles.title}>Set and check your goals! 🎯</Text>
-        )}
-        ListFooterComponent={() => (
-          <>
-            {newGoals.map((goal, index) => (
-              <View key={index} style={styles.inputContainer}>
-                <Input
-                  placeholder={`Add goal #${data.length + index + 1}`}
-                  value={goal}
-                  onChangeText={(text) => handleInputChange(text, index)}
-                  style={styles.input}
-                />
-                <Button onPress={() => addGoal(index)} />
-              </View>
-            ))}
-          </>
-        )}
-      />
+      <Card style={styles.card}>
+        <FlatList
+          data={data}
+          renderItem={({ item }) => (
+            <>
+              <Text style={styles.item}>{item.goal_description}</Text>
+              <ProgressBar animating={false} progress={item.goal_status / 5} />
+            </>
+          )}
+          keyExtractor={(item) => item.created_at}
+          ItemSeparatorComponent={() => (
+            <View style={{ height: 1, backgroundColor: "#ccc" }} />
+          )}
+          ListHeaderComponent={() => (
+            <Text style={styles.title}>Set and check your goals! 🎯</Text>
+          )}
+          ListFooterComponent={() => (
+            <>
+              {newGoals.map((goal, index) => (
+                <View key={index} style={styles.inputContainer}>
+                  <Input
+                    placeholder={`Add goal #${data.length + index + 1}`}
+                    value={goal}
+                    onChangeText={(text) => handleInputChange(text, index)}
+                    style={styles.input}
+                  />
+                  <Button onPress={() => addGoal(index)}>Add Goal!</Button>
+                </View>
+              ))}
+            </>
+          )}
+        />
+      </Card>
     </SafeAreaView>
   );
 }
@@ -119,6 +120,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  card: {
+    width: "90%",
+    marginVertical: 10,
+    padding: 15,
   },
   header: {
     fontSize: 20,
