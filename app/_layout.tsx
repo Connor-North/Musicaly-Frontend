@@ -3,6 +3,11 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "../supabase/auth-helper";
 import { Session } from "@supabase/supabase-js";
 import { View, ActivityIndicator } from "react-native";
+import { Slot, useRouter } from "expo-router";
+import { useState, useEffect, useRef } from "react";
+import { supabase } from "../supabase/auth-helper";
+import { Session } from "@supabase/supabase-js";
+import { View, ActivityIndicator } from "react-native";
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
