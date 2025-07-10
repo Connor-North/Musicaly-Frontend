@@ -57,25 +57,24 @@ export default function WeeklyChart() {
               //style={graphStyle}
               data={barData}
               width={screenWidth * 0.9}
-              height={150}
+              height={250}
               withInnerLines={false}
-              // yAxisSuffix=""
+              yAxisLabel=""
+              yAxisSuffix=""
               chartConfig={chartConfig}
               verticalLabelRotation={0}
               fromZero={true}
             />
           </Card>
           <Card style={styles.card}>
-            <ProgressChart
-              data={progressData}
+            <Progress.Bar
+              progress={0.4}
               width={screenWidth * 0.9}
-              height={100}
-              strokeWidth={8}
-              radius={25}
-              chartConfig={ringChartConfig}
-              hideLegend={false}
-              withCustomBarColorFromData
+              animated={false}
+              color={"#0256FF"}
+              unfilledColor={"#b6cdff"}
             />
+            <StarRating />
           </Card>
         </Layout>
       </View>
