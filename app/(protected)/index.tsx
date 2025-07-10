@@ -16,10 +16,6 @@ export default function Index() {
   return (
     <SafeAreaView style={styles.container}>
       <WeeklyChart />
-      <View style={styles.main}>
-        <Text style={styles.title}>Hello Protected World</Text>
-        <Text style={styles.subtitle}>This is the first page of your app.</Text>
-      </View>
       <Button title={"Sign Out"} onPress={signOut} />
     </SafeAreaView>
   );
@@ -35,7 +31,7 @@ const styles = StyleSheet.create({
   main: {
     flex: 1,
     justifyContent: "center",
-    maxWidth: 960,
+    maxWidth: 960, // NOTE - Is hard-coding right, i.e. what if on a tablet with landscape orientation
     marginHorizontal: "auto",
   },
   title: {
