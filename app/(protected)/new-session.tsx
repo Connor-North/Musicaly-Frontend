@@ -1,8 +1,8 @@
-import { Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet } from "react-native";
-import { Button, OverflowMenu, MenuItem } from "@ui-kitten/components";
-import React from "react";
+import { Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { StyleSheet } from 'react-native';
+import { Button, OverflowMenu, MenuItem, Input } from '@ui-kitten/components';
+import React from 'react';
 // const HeartIcon = (props): IconElement => <Icon {...props} name="heart" />;
 export default function NewSession() {
   const [menuVisible, setMenuVisible] = React.useState(false);
@@ -10,13 +10,15 @@ export default function NewSession() {
     setMenuVisible(!menuVisible);
   };
 
+  const [value, setValue] = React.useState('');
+
   const renderMenuButton = (): React.ReactElement => (
     <Button
       style={styles.button}
       //accessoryLeft={HeartIcon}
       onPress={toggleMenu}
     >
-      PRESS ME
+      Create New Session
     </Button>
   );
   return (
@@ -24,6 +26,12 @@ export default function NewSession() {
       className="justify-center flex-1 p-4"
       style={styles.container}
     >
+      <Input
+        style={styles.input}
+        placeholder="Place your Text"
+        value={value}
+        onChangeText={(nextValue) => setValue(nextValue)}
+      />
       <OverflowMenu
         fullWidth={true}
         onSelect={toggleMenu}
@@ -40,9 +48,13 @@ export default function NewSession() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#ffffff",
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
   },
-  button: { margin: 2 },
+  button: { margin: 2, marginTop: '30%' },
+  input: {
+    width: '75%',
+    position: 'absolute',
+    marginTop: '5%',
+  },
 });
