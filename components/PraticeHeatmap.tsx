@@ -23,9 +23,9 @@ const PracticeHeatmap: React.FC = () => {
         height={220}
         chartConfig={{
           backgroundColor: "#fff",
-          backgroundGradientFrom: "#fff",
-          backgroundGradientTo: "#fff",
-          color: (opacity = 1) => `rgba(0, 122, 255, ${opacity})`,
+          backgroundGradientFrom: "#ffffff",
+          backgroundGradientTo: "#ffffff",
+          color: (opacity = 1) => `rgba(30, 144, 255, ${opacity})`,
         }}
         squareSize={20}
       />
