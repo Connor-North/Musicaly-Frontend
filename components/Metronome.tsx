@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from “react”;
-import { View, Button, StyleSheet, Text } from “react-native”;
-import Slider from “@react-native-community/slider”;
-import { Audio } from “expo-av”;
+import { useState, useRef, useEffect } from "react";
+import { View, Button, StyleSheet, Text } from "react-native";
+import Slider from "@react-native-community/slider";
+import { Audio } from "expo-av";
 interface MetronomeProps {
   tempo?: number;
   beatsinbar?: number;
@@ -19,7 +19,7 @@ const Metronome: React.FC<MetronomeProps> = ({
   useEffect(() => {
     const loadSound = async () => {
       const { sound } = await Audio.Sound.createAsync(
-        require(“../assets/sounds/Perc_Castanet_lo.wav”)
+        require("../assets/sounds/Perc_Castanet_lo.wav")
       );
       clickSound.current = sound;
     };
@@ -63,14 +63,14 @@ const Metronome: React.FC<MetronomeProps> = ({
           }
         }}
       />
-      <Button title={isPlaying ? “Stop” : “Start”} onPress={toggleMetronome} />
+      <Button title={isPlaying ? "Stop" : "Start"} onPress={toggleMetronome} />
     </View>
   );
 };
 export default Metronome;
 const styles = StyleSheet.create({
   container: {
-    alignItems: “center”,
+    alignItems: "center",
     gap: 16,
   },
   label: {
