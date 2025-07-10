@@ -1,61 +1,57 @@
-import { Tabs } from "expo-router";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import React from "react";
-import * as eva from "@eva-design/eva";
-import { ApplicationProvider } from "@ui-kitten/components";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { StyleSheet } from "react-native";
+import { Slot, useRouter } from 'expo-router';
+import { useState, useEffect, useRef } from 'react';
+import { supabase } from '../supabase/auth-helper';
+import { Session } from '@supabase/supabase-js';
+import { View, ActivityIndicator } from 'react-native';
 
 export default function RootLayout() {
-  return (
-    <ApplicationProvider {...eva} theme={eva.light}>
-      <SafeAreaProvider>
-        <React.Fragment>
-          <Tabs>
-            <Tabs.Screen
-              name="index"
-              options={{
-                title: "Home",
-                tabBarLabel: "Home",
-                tabBarIcon: ({ color, size }) => (
-                  <AntDesign name="home" size={24} color="black" />
-                ),
-              }}
-            />
-            <Tabs.Screen
-              name="dashboard"
-              options={{
-                title: "Dashboard",
-                tabBarLabel: "Dashboard",
-                tabBarIcon: ({ color, size }) => (
-                  <AntDesign name="dashboard" size={24} color="black" />
-                ),
-              }}
-            />
-            <Tabs.Screen
-              name="library"
-              options={{
-                title: "Library",
-                tabBarLabel: "Library",
-                tabBarIcon: ({ color, size }) => (
-                  <Ionicons name="library-outline" size={24} color="black" />
-                ),
-              }}
-            />
-            <Tabs.Screen
-              name="new-session"
-              options={{
-                title: "New Session",
-                tabBarLabel: "New Session",
-                tabBarIcon: ({ color, size }) => (
-                  <Ionicons name="create-outline" size={24} color="black" />
-                ),
-              }}
-            />
-          </Tabs>
-        </React.Fragment>
-      </SafeAreaProvider>
-    </ApplicationProvider>
-  );
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const hasNavigated = useRef(false);
+
+  // NOTE - This works. But routing loops infinitely
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // FIXME - NOTE - Handle navigation separately - test this area for infinite loops
+  useEffect(() => {
+    if (loading) return;
+    if (hasNavigated.current) return;
+    if (session) {
+      hasNavigated.current = true;
+      router.replace('/(protected)');
+    } else {
+      hasNavigated.current = true;
+      router.replace('/sign-in');
+    }
+
+    return () => {
+      hasNavigated.current = false;
+    };
+  }, [session, loading]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  // FIXME: Return Slot component to render children
+  return <Slot />;
 }
