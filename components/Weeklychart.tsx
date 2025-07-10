@@ -36,6 +36,7 @@ export default function WeeklyChart() {
   const progressData = {
     labels: ["Goal: 125 m"],
     data: [0.6],
+    colors: ["#0256FF"],
   };
 
   return (
@@ -67,10 +68,11 @@ export default function WeeklyChart() {
           data={progressData}
           width={screenWidth * 0.25}
           height={200}
-          strokeWidth={6}
+          strokeWidth={8}
           radius={40}
           chartConfig={ringChartConfig}
           hideLegend={true}
+          withCustomBarColorFromData
         />
       </View>
     </>

@@ -1,8 +1,17 @@
 import { Button, StyleSheet, Text, View } from "react-native";
 import { handleSignOut } from "../../supabase/supabase-signout";
 import WeeklyChart from "@/components/Weeklychart";
+import { useState } from "react";
 
 export default function Index() {
+  const [disableSignOutButton, setDisableSignOutButton] = useState(false);
+
+  async function signOut() {
+    setDisableSignOutButton(true);
+    await handleSignOut();
+    setDisableSignOutButton(false);
+  }
+
   return (
     <View style={styles.container}>
       <WeeklyChart />
@@ -10,7 +19,7 @@ export default function Index() {
         <Text style={styles.title}>Hello Protected World</Text>
         <Text style={styles.subtitle}>This is the first page of your app.</Text>
       </View>
-      <Button title={"Sign Out"} onPress={() => handleSignOut} />
+      <Button title={"Sign Out"} onPress={signOut} />
     </View>
   );
 }
