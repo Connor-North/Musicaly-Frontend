@@ -2,6 +2,7 @@ import { Button, StyleSheet, Text, View } from "react-native";
 import { handleSignOut } from "../../supabase/supabase-signout";
 import WeeklyChart from "@/components/Weeklychart";
 import { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   const [disableSignOutButton, setDisableSignOutButton] = useState(false);
@@ -13,22 +14,23 @@ export default function Index() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <WeeklyChart />
       <View style={styles.main}>
         <Text style={styles.title}>Hello Protected World</Text>
         <Text style={styles.subtitle}>This is the first page of your app.</Text>
       </View>
       <Button title={"Sign Out"} onPress={signOut} />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
     alignItems: "center",
-    padding: 24,
+    backgroundColor: "#ffffff",
   },
   main: {
     flex: 1,
