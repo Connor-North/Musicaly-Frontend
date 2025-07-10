@@ -1,5 +1,7 @@
+import React from "react";
 import { BarChart, ProgressChart } from "react-native-chart-kit";
-import { View, Text, Dimensions, StyleSheet } from "react-native";
+import { View, Dimensions, StyleSheet, ViewProps } from "react-native";
+import { Card, Layout, Text } from "@ui-kitten/components";
 
 export default function WeeklyChart() {
   const screenWidth = Dimensions.get("window").width;
@@ -41,39 +43,41 @@ export default function WeeklyChart() {
 
   return (
     <>
-      <View style={[styles.verticallySpaced, styles.mt0]}>
-        <Text>Weekly practice stats</Text>
-      </View>
       <View
         style={
           (styles.container,
           {
-            flexDirection: "row",
+            flexDirection: "column",
           })
         }
       >
-        <BarChart
-          //style={graphStyle}
-          data={barData}
-          width={screenWidth * 0.65}
-          height={200}
-          withInnerLines={false}
-          // yAxisSuffix=""
-          chartConfig={chartConfig}
-          verticalLabelRotation={0}
-          fromZero={true}
-        />
-
-        <ProgressChart
-          data={progressData}
-          width={screenWidth * 0.25}
-          height={200}
-          strokeWidth={8}
-          radius={40}
-          chartConfig={ringChartConfig}
-          hideLegend={true}
-          withCustomBarColorFromData
-        />
+        <Layout style={styles.topContainer} level="1">
+          <Card style={styles.card}>
+            <BarChart
+              //style={graphStyle}
+              data={barData}
+              width={screenWidth * 0.9}
+              height={150}
+              withInnerLines={false}
+              // yAxisSuffix=""
+              chartConfig={chartConfig}
+              verticalLabelRotation={0}
+              fromZero={true}
+            />
+          </Card>
+          <Card style={styles.card}>
+            <ProgressChart
+              data={progressData}
+              width={screenWidth * 0.9}
+              height={100}
+              strokeWidth={8}
+              radius={25}
+              chartConfig={ringChartConfig}
+              hideLegend={false}
+              withCustomBarColorFromData
+            />
+          </Card>
+        </Layout>
       </View>
     </>
   );
@@ -87,9 +91,19 @@ const styles = StyleSheet.create({
   verticallySpaced: {
     paddingTop: 1,
     paddingBottom: 4,
-    alignSelf: "stretch",
+    // alignSelf: "stretch",
   },
   mt0: {
     marginTop: 0,
+  },
+  topContainer: {
+    flexDirection: "column",
+    alignSelf: "baseline",
+    alignItems: "flex-start",
+    // justifyContent: "space-between",
+  },
+  card: {
+    flex: 1,
+    margin: 2,
   },
 });
