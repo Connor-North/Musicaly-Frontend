@@ -4,19 +4,15 @@ import { StyleSheet } from "react-native";
 import PSU from "./PSU";
 import { useLocalSearchParams } from "expo-router";
 
-const [sessionTime, setSessionTime] = useState<number>(0);
-
 export default function PracticeSession() {
-  const params = useLocalSearchParams<{
-    title: string;
-    id: string;
-    composer: string;
-  }>();
+  const [sessionTime, setSessionTime] = useState<number>(0);
+  const { title, id, composer } = useLocalSearchParams();
+  const unitId = Array.isArray(id) ? id[0] : id;
 
   return (
     <>
       <Layout style={styles.container}>
-        <PSU setSessionTime={setSessionTime} unitId={params.id} />
+        <PSU setSessionTime={setSessionTime} unitId={unitId} />
       </Layout>
     </>
   );
