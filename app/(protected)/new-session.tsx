@@ -1,31 +1,28 @@
-import { View, TextInput, StyleSheet, Modal, ScrollView } from "react-native";
+import { View, StyleSheet, Modal, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, OverflowMenu, MenuItem, Input } from "@ui-kitten/components";
+import {
+  Button,
+  Text,
+  Input,
+  IndexPath,
+  Radio,
+  RadioGroup,
+} from "@ui-kitten/components";
 import React from "react";
 import UnitCard from "@/components/unit-card";
 import UnitList from "@/components/units/UnitList";
 
 export default function NewSession() {
-  const [menuVisible, setMenuVisible] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [artist, setArtist] = React.useState("");
-
-  const toggleMenu = (): void => {
-    setMenuVisible(!menuVisible);
-  };
 
   const toggleModal = (): void => {
     setModalVisible(!modalVisible);
   };
 
-  const [value, setValue] = React.useState("");
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  const renderMenuButton = (): React.ReactElement => (
-    <Button style={styles.button} onPress={toggleMenu}>
-      Create New Session
-    </Button>
-  );
   return (
     <ScrollView>
       <SafeAreaView
@@ -37,13 +34,6 @@ export default function NewSession() {
           Create New Session
         </Button>
         <UnitList />
-
-        {/* <Input
-          style={styles.input}
-          placeholder="Place your Text"
-          value={value}
-          onChangeText={(nextValue) => setValue(nextValue)}
-        /> */}
 
         {/* 
           <MenuItem title="Repertoire" onPress={toggleModal} />
@@ -70,16 +60,27 @@ export default function NewSession() {
           >
             <View style={styles.view} className="p-12 rounded-lg bg-white">
               <Input
-                placeholder={"title"}
+                placeholder={"Title"}
                 onChangeText={(text) => setTitle(text)}
                 value={title}
               />
               <Input
-                placeholder={"artist"}
+                placeholder={"Artist"}
                 onChangeText={(text) => setArtist(text)}
                 value={artist}
               />
-              <Button onPress={() => setModalVisible(false)}>Create</Button>
+              <RadioGroup
+                selectedIndex={selectedIndex}
+                onChange={(index) => setSelectedIndex(index)}
+              >
+                <Radio>Repertoire</Radio>
+                <Radio>Technical Exercises</Radio>
+              </RadioGroup>
+              {title.length < 2 && artist.length < 2 ? (
+                <Text>Please enter more information</Text>
+              ) : (
+                <Button onPress={() => setModalVisible(false)}>Create</Button>
+              )}
             </View>
           </View>
         </Modal>
