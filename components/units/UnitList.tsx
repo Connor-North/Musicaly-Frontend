@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, TextInput } from "react-native";
+import { StyleSheet, View, Text, TextInput, Dimensions } from "react-native";
 import { List, ListItem, Button } from "@ui-kitten/components";
 
 interface IListItem {
@@ -47,6 +47,8 @@ const data: IListItem[] = [
 
 export default function UnitList() {
   const [query, setQuery] = useState("");
+  const screenWidth = Dimensions.get("window").width;
+  const screenHeight = Dimensions.get("window").height;
 
   const filteredListData = (
     query
@@ -81,14 +83,20 @@ export default function UnitList() {
         value={query}
         onChangeText={setQuery}
       />
-
-      <List
-        data={filteredListData}
-        renderItem={renderListItem}
-        ItemSeparatorComponent={() => (
-          <View style={{ height: 1, backgroundColor: "#ccc" }} />
-        )}
-      />
+      <View
+        style={[
+          styles.fixedView,
+          { height: screenHeight * 0.5, width: screenWidth * 0.9 },
+        ]}
+      >
+        <List
+          data={filteredListData}
+          renderItem={renderListItem}
+          ItemSeparatorComponent={() => (
+            <View style={{ height: 1, backgroundColor: "#ccc" }} />
+          )}
+        />
+      </View>
     </View>
   );
 }
@@ -111,5 +119,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingHorizontal: 10,
     marginBottom: 12,
+  },
+  fixedView: {
+    maxHeight: 250,
+    maxWidth: 250,
   },
 });
