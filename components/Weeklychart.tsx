@@ -1,8 +1,7 @@
 import React from "react";
-import { BarChart, ProgressChart } from "react-native-chart-kit";
+import { BarChart } from "react-native-chart-kit";
 import { View, Dimensions, StyleSheet, ViewProps } from "react-native";
-import { Card, Layout, Text } from "@ui-kitten/components";
-import * as Progress from "react-native-progress";
+import { Card, Layout, Text, ProgressBar } from "@ui-kitten/components";
 import StarRating from "./StarRating";
 
 export default function WeeklyChart() {
@@ -25,10 +24,6 @@ export default function WeeklyChart() {
     fillShadowGradientToOpacity: 1,
   };
 
-  const ringChartConfig = {
-    color: (opacity = 1) => `rgba(2, 86, 255, ${opacity})`, // Fixed
-  };
-
   const barData = {
     labels: ["M", "T", "W", "T", "F", "S", "S"],
     datasets: [
@@ -36,12 +31,6 @@ export default function WeeklyChart() {
         data: [20, 45, 28, 80, 99, 43, 43],
       },
     ],
-  };
-
-  const progressData = {
-    labels: ["Goal: 125 m"],
-    data: [0.6],
-    colors: ["#0256FF"],
   };
 
   return (
@@ -66,15 +55,12 @@ export default function WeeklyChart() {
           </Card>
           <Card style={styles.card}>
             <View style={styles.cardContent}>
-              <Progress.Bar
-                progress={0.4}
-                width={screenWidth * 0.9}
-                animated={false}
-                color={"#0256FF"}
-                unfilledColor={"#b6cdff"}
-              />
               <StarRating />
             </View>
+          </Card>
+          <Card style={styles.card}>
+            <Text>You've met 80% of your target for this week!</Text>
+            <ProgressBar animating={false} progress={0.8} size={"large"} />
           </Card>
         </Layout>
       </View>
