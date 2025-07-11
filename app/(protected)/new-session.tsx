@@ -45,16 +45,10 @@ export default function NewSession() {
           onChangeText={(nextValue) => setValue(nextValue)}
         /> */}
 
-        {/* <OverflowMenu
-          fullWidth={true}
-          onSelect={toggleMenu}
-          visible={menuVisible}
-          anchor={renderMenuButton}
-          onBackdropPress={toggleMenu}
-        >
+        {/* 
           <MenuItem title="Repertoire" onPress={toggleModal} />
           <MenuItem title="Technical Exercises" onPress={toggleModal} />
-        </OverflowMenu> */}
+      */}
 
         {/* TODO - Move menu options into modal */}
 
