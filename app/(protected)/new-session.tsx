@@ -48,6 +48,8 @@ export default function NewSession() {
 
       <Modal
         visible={modalVisible}
+        //animationType="slide"
+        //presentationStyle="pageSheet"
         onRequestClose={() => {
           setModalVisible(false);
         }}
