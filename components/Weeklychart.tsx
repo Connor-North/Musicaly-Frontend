@@ -22,6 +22,7 @@ export default function WeeklyChart() {
     fillShadowGradientTo: "#0256FF",
     fillShadowGradientFromOpacity: 1,
     fillShadowGradientToOpacity: 1,
+    //bardRad,
   };
 
   const barData = {
