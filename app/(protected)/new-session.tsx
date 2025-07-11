@@ -4,9 +4,10 @@ import { Button, Text, Input, Radio, RadioGroup } from "@ui-kitten/components";
 import React from "react";
 import UnitCard from "@/components/unit-card";
 import UnitList from "@/components/units/UnitList";
-import PSU from "@/components/sessions/PSU";
+import { useRouter } from "expo-router";
 
 export default function NewSession() {
+  const router = useRouter();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [artist, setArtist] = React.useState("");
@@ -30,7 +31,15 @@ export default function NewSession() {
         <UnitList
           buttonText="Start"
           onButtonPress={(item) => {
-            console.log("You clicked:", item.title);
+            console.log("You clicked:", item.title, item.id);
+            router.push({
+              pathname: "/screens/sessions/PracticeSession",
+              params: {
+                title: item.title,
+                id: item.id,
+                composer: item.composer,
+              },
+            });
           }}
         />
 

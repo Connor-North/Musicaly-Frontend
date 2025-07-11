@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Platform, StyleSheet, View } from "react-native";
-import Metronome from "../Metronome";
+import Metronome from "../../../components/Metronome";
 import { useState, useRef } from "react";
 import { Layout, Button } from "@ui-kitten/components";
 import StopwatchTimer from "react-native-animated-stopwatch-timer";
