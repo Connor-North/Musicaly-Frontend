@@ -48,6 +48,7 @@ export default function RootLayout() {
     //<SafeAreaProvider>
 
     <React.Fragment>
+      <TopNavigation accessoryRight={renderOverflowMenuAction} />
       <Tabs>
         <Tabs.Screen
           name="index"
@@ -59,6 +60,7 @@ export default function RootLayout() {
             ),
           }}
         />
+        <TopNavigation accessoryRight={renderOverflowMenuAction} />
         <Tabs.Screen
           name="dashboard"
           options={{
@@ -69,6 +71,7 @@ export default function RootLayout() {
             ),
           }}
         />
+        <TopNavigation accessoryRight={renderOverflowMenuAction} />
         <Tabs.Screen
           name="library"
           options={{
@@ -79,6 +82,7 @@ export default function RootLayout() {
             ),
           }}
         />
+        <TopNavigation accessoryRight={renderOverflowMenuAction} />
         <Tabs.Screen
           name="new-session"
           options={{
@@ -90,7 +94,6 @@ export default function RootLayout() {
           }}
         />
       </Tabs>
-      <TopNavigation accessoryRight={renderOverflowMenuAction} />
     </React.Fragment>
 
     // </SafeAreaProvider>
