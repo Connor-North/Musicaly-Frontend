@@ -1,13 +1,21 @@
 import { Tabs } from "expo-router";
 //import { SafeAreaProvider } from "react-native-safe-area-context";
-import React from "react";
+import React, { MouseEventHandler } from "react";
 //import * as eva from "@eva-design/eva";
 //import { ApplicationProvider } from "@ui-kitten/components";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { Stylesheet, Views } from "react-native";
+//import { Stylesheet, Views } from "react-native";
 
-import { TopNavigationAction, Icon, IconElement } from "@ui-kitten/components";
+import {
+  TopNavigationAction,
+  Icon,
+  IconElement,
+  IconProps,
+  OverflowMenu,
+  MenuItem,
+  TopNavigation,
+} from "@ui-kitten/components";
 
 export default function RootLayout() {
   const [menuVisible, setMenuVisible] = React.useState(false);
@@ -15,12 +23,25 @@ export default function RootLayout() {
     setMenuVisible(!menuVisible);
   };
 
-  const MenuIcon = (props: { name: "string" }): IconElement => (
+  const MenuIcon = (props: IconProps): IconElement => (
     <Icon {...props} name="more-vertical" />
+  );
+
+  const LogOutIcon = (props: IconProps): IconElement => (
+    <Icon {...props} name="log-out" />
   );
 
   const renderMenuAction = (): React.ReactElement => (
     <TopNavigationAction icon={MenuIcon} onPress={toggleMenu} />
+  );
+  const renderOverflowMenuAction = (): React.ReactElement => (
+    <OverflowMenu
+      anchor={renderMenuAction}
+      visible={menuVisible}
+      onBackdropPress={toggleMenu}
+    >
+      <MenuItem accessoryLeft={LogOutIcon} title="Logout" />
+    </OverflowMenu>
   );
   return (
     // <ApplicationProvider {...eva} theme={eva.light}>
@@ -69,6 +90,7 @@ export default function RootLayout() {
           }}
         />
       </Tabs>
+      <TopNavigation accessoryRight={renderOverflowMenuAction} />
     </React.Fragment>
 
     // </SafeAreaProvider>
