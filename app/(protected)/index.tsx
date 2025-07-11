@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet } from "react-native";
 import { handleSignOut } from "../../supabase/supabase-signout";
 import WeeklyChart from "@/components/Weeklychart";
 import { useState } from "react";
