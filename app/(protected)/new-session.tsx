@@ -58,8 +58,8 @@ export default function NewSession() {
 
         <Modal
           visible={modalVisible}
-          //animationType="slide"
-          //presentationStyle="pageSheet"
+          animationType="slide"
+          presentationStyle="pageSheet"
           onRequestClose={() => {
             setModalVisible(false);
           }}
@@ -69,12 +69,12 @@ export default function NewSession() {
             className="flex-1 items-center justify-center"
           >
             <View style={styles.view} className="p-12 rounded-lg bg-white">
-              <TextInput
+              <Input
                 placeholder={"title"}
                 onChangeText={(text) => setTitle(text)}
                 value={title}
               />
-              <TextInput
+              <Input
                 placeholder={"artist"}
                 onChangeText={(text) => setArtist(text)}
                 value={artist}
