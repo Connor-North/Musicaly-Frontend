@@ -18,6 +18,7 @@ export default function PSU() {
           <StopwatchTimer
             ref={stopwatchRef}
             containerStyle={styles.stopWatchContainer}
+            animationDuration={0}
             digitStyle={Platform.select({
               ios: {
                 width: 32,
@@ -38,7 +39,7 @@ export default function PSU() {
             <Button
               onPress={() => {
                 stopwatchRef.current?.pause();
-                setSessionTime(stopwatchRef.current?.getSnapshot());
+                setSessionTime(stopwatchRef.current?.getSnapshot() / 60000);
               }}
             >
               ||

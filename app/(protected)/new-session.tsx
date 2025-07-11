@@ -27,7 +27,6 @@ export default function NewSession() {
         <Button style={styles.button} onPress={toggleModal}>
           Create New Session
         </Button>
-        <PSU />
         <UnitList
           buttonText="Start"
           onButtonPress={(item) => {
