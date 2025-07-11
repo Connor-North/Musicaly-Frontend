@@ -32,7 +32,7 @@ export default function RootLayout() {
   );
 
   const renderMenuAction = (): React.ReactElement => (
-    <TopNavigationAction icon={MenuIcon} onPress={toggleMenu} />
+    <TopNavigationAction onPress={toggleMenu} />
   );
   const renderOverflowMenuAction = (): React.ReactElement => (
     <OverflowMenu
@@ -40,7 +40,7 @@ export default function RootLayout() {
       visible={menuVisible}
       onBackdropPress={toggleMenu}
     >
-      <MenuItem accessoryLeft={LogOutIcon} title="Logout" />
+      <MenuItem title="Logout" />
     </OverflowMenu>
   );
   return (
