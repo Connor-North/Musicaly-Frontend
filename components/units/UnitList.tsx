@@ -46,8 +46,6 @@ export default function UnitList() {
 
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.title}>🎵 Your pieces</Text>
-
       <TextInput
         style={styles.input}
         placeholder="Search..."
