@@ -76,7 +76,7 @@ export default function NewSession() {
                 <Radio>Repertoire</Radio>
                 <Radio>Technical Exercises</Radio>
               </RadioGroup>
-              {title.length < 2 && artist.length < 2 ? (
+              {title.length < 2 || artist.length < 2 ? (
                 <Text>Please enter more information</Text>
               ) : (
                 <Button onPress={() => setModalVisible(false)}>Create</Button>
