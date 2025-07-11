@@ -3,8 +3,14 @@ import { StyleSheet, View, Text, TextInput, Dimensions } from "react-native";
 import { List, ListItem, Button } from "@ui-kitten/components";
 
 interface IListItem {
+  id: string;
   title: string;
   composer: string;
+  tempo_bpm: number | null;
+  beats_in_bar: number | null;
+  subdivision: number | null;
+  collection: string | null;
+  created_at: string;
   updated_at: string;
 }
 
@@ -14,38 +20,79 @@ interface IListItem {
 
 const data: IListItem[] = [
   {
-    title: "Moonlight Sonata",
-    composer: "Beethoven",
+    id: "b111895c-4aab-4055-96e9-d95458b00f50",
+    title: "Nocturne Op. 9 No. 2",
+    composer: "Chopin",
+    tempo_bpm: null,
+    beats_in_bar: null,
+    subdivision: null,
+    collection: null,
+    created_at: "2025-07-10T21:11:10.616878+00:00",
     updated_at: "2025-07-10T21:11:10.616878+00:00",
   },
   {
-    title: "Nocturne Op. 9 No. 2",
-    composer: "Chopin",
-    updated_at: "2025-07-10T21:45:10.616878+00:00",
-  },
-  {
+    id: "6596da09-a4ff-49e1-ae56-e64f40f25a1f",
     title: "Clair de Lune",
     composer: "Debussy",
-    updated_at: "2025-07-10T21:40:10.616878+00:00",
+    tempo_bpm: null,
+    beats_in_bar: null,
+    subdivision: null,
+    collection: null,
+    created_at: "2025-07-10T21:11:10.616878+00:00",
+    updated_at: "2025-07-10T21:11:10.616878+00:00",
   },
   {
+    id: "dafa4c83-aca1-4672-95a6-8394281a582f",
     title: "Für Elise",
     composer: "Beethoven",
-    updated_at: "2025-07-10T21:30:10.616878+00:00",
+    tempo_bpm: null,
+    beats_in_bar: null,
+    subdivision: null,
+    collection: null,
+    created_at: "2025-07-10T21:11:10.616878+00:00",
+    updated_at: "2025-07-10T21:11:10.616878+00:00",
   },
   {
+    id: "907d9828-4759-45f4-8e51-aeefd88f4296",
     title: "Invention no.8 in F Major",
     composer: "Bach",
-    updated_at: "2025-07-10T21:20:10.616878+00:00",
+    tempo_bpm: null,
+    beats_in_bar: null,
+    subdivision: null,
+    collection: null,
+    created_at: "2025-07-10T21:11:10.616878+00:00",
+    updated_at: "2025-07-10T21:11:10.616878+00:00",
   },
   {
+    id: "b5069c5b-8a2c-4d88-944b-198c43ebc26d",
     title: "Waltz in B Minor",
     composer: "Schubert",
-    updated_at: "2025-07-10T21:10:10.616878+00:00",
+    tempo_bpm: null,
+    beats_in_bar: null,
+    subdivision: null,
+    collection: null,
+    created_at: "2025-07-10T21:11:10.616878+00:00",
+    updated_at: "2025-07-10T21:11:10.616878+00:00",
+  },
+  {
+    id: "19b2d9da-5035-4703-a360-4ad5a56754d8",
+    title: "Moonlight Sonata",
+    composer: "Beethoven",
+    tempo_bpm: null,
+    beats_in_bar: null,
+    subdivision: null,
+    collection: null,
+    created_at: "2025-07-10T21:11:10.616878+00:00",
+    updated_at: "2025-07-10T21:51:10.616878+00:00",
   },
 ];
 
-export default function UnitList() {
+interface UnitListProps {
+  onButtonPress: (item: IListItem) => void;
+  buttonText: string;
+}
+
+export default function UnitList({ onButtonPress, buttonText }: UnitListProps) {
   const [query, setQuery] = useState("");
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
@@ -71,7 +118,11 @@ export default function UnitList() {
     <ListItem
       title={item.title}
       description={item.composer}
-      accessoryRight={<Button size="tiny">Edit</Button>}
+      accessoryRight={
+        <Button size="tiny" onPress={() => onButtonPress(item)}>
+          {buttonText}
+        </Button>
+      }
     />
   );
 
@@ -85,8 +136,12 @@ export default function UnitList() {
       />
       <View
         style={[
-          styles.fixedView,
-          { height: screenHeight * 0.5, width: screenWidth * 0.9 },
+          {
+            height: screenHeight * 0.4,
+            width: screenWidth * 0.9,
+            // maxHeight: screenHeight * 0.4,
+            // maxWidth: screenWidth * 0.9,
+          },
         ]}
       >
         <List
@@ -119,9 +174,5 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     paddingHorizontal: 10,
     marginBottom: 12,
-  },
-  fixedView: {
-    maxHeight: 250,
-    maxWidth: 250,
   },
 });

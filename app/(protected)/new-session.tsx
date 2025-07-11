@@ -33,16 +33,13 @@ export default function NewSession() {
         <Button style={styles.button} onPress={toggleModal}>
           Create New Session
         </Button>
-        <UnitList />
+        <UnitList
+          buttonText="Start"
+          onButtonPress={(item) => {
+            console.log("You clicked:", item.title);
+          }}
+        />
 
-        {/* 
-          <MenuItem title="Repertoire" onPress={toggleModal} />
-          <MenuItem title="Technical Exercises" onPress={toggleModal} />
-      */}
-
-        {/* TODO - Move menu options into modal */}
-
-        {/* Create new card list with header to 'practice new piece' */}
         <UnitCard />
         <UnitCard />
 
