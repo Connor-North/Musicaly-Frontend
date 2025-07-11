@@ -1,13 +1,14 @@
-import { View, TextInput, StyleSheet, Modal } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, OverflowMenu, MenuItem, Input } from "@ui-kitten/components";
-import React from "react";
+import { View, TextInput, StyleSheet, Modal, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Button, OverflowMenu, MenuItem, Input } from '@ui-kitten/components';
+import React from 'react';
+import UnitCard from '@/components/unit-card';
 
 export default function NewSession() {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
-  const [title, setTitle] = React.useState("");
-  const [artist, setArtist] = React.useState("");
+  const [title, setTitle] = React.useState('');
+  const [artist, setArtist] = React.useState('');
 
   const toggleMenu = (): void => {
     setMenuVisible(!menuVisible);
@@ -17,7 +18,7 @@ export default function NewSession() {
     setModalVisible(!modalVisible);
   };
 
-  const [value, setValue] = React.useState("");
+  const [value, setValue] = React.useState('');
 
   const renderMenuButton = (): React.ReactElement => (
     <Button style={styles.button} onPress={toggleMenu}>
@@ -25,75 +26,88 @@ export default function NewSession() {
     </Button>
   );
   return (
-    <SafeAreaView
-      className="justify-center flex-1 p-4"
-      style={styles.container}
-    >
-      <Input
-        style={styles.input}
-        placeholder="Place your Text"
-        value={value}
-        onChangeText={(nextValue) => setValue(nextValue)}
-      />
-      <OverflowMenu
-        fullWidth={true}
-        onSelect={toggleMenu}
-        visible={menuVisible}
-        anchor={renderMenuButton}
-        onBackdropPress={toggleMenu}
+    <ScrollView>
+      <SafeAreaView
+        className="justify-center flex-1 p-4"
+        style={styles.container}
       >
-        <MenuItem title="Repertoire" onPress={toggleModal} />
-        <MenuItem title="Technical Exercises" onPress={toggleModal} />
-      </OverflowMenu>
-
-      <Modal
-        visible={modalVisible}
-        //animationType="slide"
-        //presentationStyle="pageSheet"
-        onRequestClose={() => {
-          setModalVisible(false);
-        }}
-      >
-        <View
-          style={styles.mainView}
-          className="flex-1 items-center justify-center"
+        <Input
+          style={styles.input}
+          placeholder="Place your Text"
+          value={value}
+          onChangeText={(nextValue) => setValue(nextValue)}
+        />
+        <OverflowMenu
+          fullWidth={true}
+          onSelect={toggleMenu}
+          visible={menuVisible}
+          anchor={renderMenuButton}
+          onBackdropPress={toggleMenu}
         >
-          <View style={styles.view} className="p-12 rounded-lg bg-white">
-            <TextInput
-              placeholder={"title"}
-              onChangeText={(text) => setTitle(text)}
-              value={title}
-            />
-            <TextInput
-              placeholder={"artist"}
-              onChangeText={(text) => setArtist(text)}
-              value={artist}
-            />
-            <Button onPress={() => setModalVisible(false)}>Create</Button>
+          <MenuItem title="Repertoire" onPress={toggleModal} />
+          <MenuItem title="Technical Exercises" onPress={toggleModal} />
+        </OverflowMenu>
+
+        <UnitCard />
+        <UnitCard />
+        <UnitCard />
+        <UnitCard />
+        <UnitCard />
+        <UnitCard />
+        <UnitCard />
+        <UnitCard />
+        <UnitCard />
+        <UnitCard />
+
+        <Modal
+          visible={modalVisible}
+          //animationType="slide"
+          //presentationStyle="pageSheet"
+          onRequestClose={() => {
+            setModalVisible(false);
+          }}
+        >
+          <View
+            style={styles.mainView}
+            className="flex-1 items-center justify-center"
+          >
+            <View style={styles.view} className="p-12 rounded-lg bg-white">
+              <TextInput
+                placeholder={'title'}
+                onChangeText={(text) => setTitle(text)}
+                value={title}
+              />
+              <TextInput
+                placeholder={'artist'}
+                onChangeText={(text) => setArtist(text)}
+                value={artist}
+              />
+              <Button onPress={() => setModalVisible(false)}>Create</Button>
+            </View>
           </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
+        </Modal>
+      </SafeAreaView>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    backgroundColor: "#ffffff",
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
   },
-  button: { margin: 2, marginTop: "30%" },
+  button: { margin: 2, marginTop: '10%', marginBottom: '5%' },
   input: {
-    width: "75%",
-    position: "absolute",
-    marginTop: "5%",
+    width: '75%',
+    position: 'absolute',
+    marginTop: '5%',
   },
   view: {
-    position: "relative",
-    padding: "15%",
+    position: 'relative',
+    padding: '15%',
   },
   mainView: {
-    justifyContent: "center",
+    justifyContent: 'center',
     flex: 1,
   },
 });
