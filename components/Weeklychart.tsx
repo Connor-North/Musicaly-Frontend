@@ -22,7 +22,7 @@ export default function WeeklyChart() {
     fillShadowGradientTo: "#0256FF",
     fillShadowGradientFromOpacity: 1,
     fillShadowGradientToOpacity: 1,
-    //bardRad,
+    barRadius: 5,
   };
 
   const barData = {
@@ -51,6 +51,7 @@ export default function WeeklyChart() {
                 chartConfig={chartConfig}
                 verticalLabelRotation={0}
                 fromZero={true}
+                showBarTops={false}
               />
             </View>
           </Card>
