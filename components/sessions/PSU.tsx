@@ -4,50 +4,60 @@ import Metronome from "../Metronome";
 import { useState, useRef } from "react";
 import { Layout, Button } from "@ui-kitten/components";
 import StopwatchTimer from "react-native-animated-stopwatch-timer";
+import React from "react";
 
 global.__reanimatedWorkletInit = () => {};
 
-export default function PSU() {
-  const [sessionTime, setSessionTime] = useState<number>(0);
-  console.log(sessionTime);
-  const stopwatchRef = useRef(null);
+interface PSUProps {
+  setSessionTime: React.Dispatch<React.SetStateAction<number>>;
+  unitId: string;
+}
+
+export default function PSU({ setSessionTime, unitId }: PSUProps) {
+  const [unitTime, setUnitTime] = useState<number>(0);
+  console.log(unitTime);
+  const stopwatchRef = useRef<any>(null);
+
+  function endUnit() {
+    setSessionTime((prev) => prev + unitTime);
+  }
+
   return (
-    <>
-      <Layout>
-        <View style={styles.container}>
-          <StopwatchTimer
-            ref={stopwatchRef}
-            containerStyle={styles.stopWatchContainer}
-            animationDuration={0}
-            digitStyle={Platform.select({
-              ios: {
-                width: 32,
-              },
-              android: undefined,
-            })}
-            separatorStyle={Platform.select({
-              ios: {
-                width: 14,
-              },
-              android: undefined,
-            })}
-            textCharStyle={styles.stopWatchChar}
-            trailingZeros={0}
-          />
-          <View style={styles.buttonsContainer}>
-            <Button onPress={() => stopwatchRef.current?.play()}>▶</Button>
-            <Button
-              onPress={() => {
-                stopwatchRef.current?.pause();
-                setSessionTime(stopwatchRef.current?.getSnapshot() / 60000);
-              }}
-            >
-              ||
-            </Button>
-          </View>
-        </View>
-      </Layout>
-    </>
+    <View style={styles.container}>
+      <StopwatchTimer
+        ref={stopwatchRef}
+        containerStyle={styles.stopWatchContainer}
+        animationDuration={0}
+        digitStyle={Platform.select({
+          ios: {
+            width: 32,
+          },
+          android: undefined,
+        })}
+        separatorStyle={Platform.select({
+          ios: {
+            width: 14,
+          },
+          android: undefined,
+        })}
+        textCharStyle={styles.stopWatchChar}
+        trailingZeros={0}
+      />
+      <View style={styles.buttonsContainer}>
+        <Button onPress={() => stopwatchRef.current?.play()}>▶</Button>
+        <Button
+          onPress={() => {
+            stopwatchRef.current?.pause();
+            setUnitTime(stopwatchRef.current?.getSnapshot() / 60000);
+          }}
+        >
+          ||
+        </Button>
+        <Button onPress={endUnit}>⬜</Button>
+
+        {/* TODO -  On unit end, take props and update. Maybe get rid of the extra useState in here?*/}
+      </View>
+    </View>
   );
 }
 const styles = StyleSheet.create({
@@ -55,16 +65,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "#ffffff",
   },
   stopWatchContainer: {
     paddingVertical: 4,
     paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
-    // borderWidth: 1,
-    // backgroundColor: "black",
-    // borderColor: "gray",
     borderRadius: 24,
   },
   buttonsContainer: {
