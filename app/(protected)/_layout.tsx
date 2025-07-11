@@ -5,11 +5,27 @@ import React from "react";
 //import { ApplicationProvider } from "@ui-kitten/components";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { Stylesheet, Views } from "react-native";
+
+import { TopNavigationAction, Icon, IconElement } from "@ui-kitten/components";
 
 export default function RootLayout() {
+  const [menuVisible, setMenuVisible] = React.useState(false);
+  const toggleMenu = (): void => {
+    setMenuVisible(!menuVisible);
+  };
+
+  const MenuIcon = (props: { name: "string" }): IconElement => (
+    <Icon {...props} name="more-vertical" />
+  );
+
+  const renderMenuAction = (): React.ReactElement => (
+    <TopNavigationAction icon={MenuIcon} onPress={toggleMenu} />
+  );
   return (
     // <ApplicationProvider {...eva} theme={eva.light}>
     //<SafeAreaProvider>
+
     <React.Fragment>
       <Tabs>
         <Tabs.Screen
@@ -54,6 +70,7 @@ export default function RootLayout() {
         />
       </Tabs>
     </React.Fragment>
+
     // </SafeAreaProvider>
     //</ApplicationProvider>
   );
