@@ -2,7 +2,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Platform, StyleSheet, View } from "react-native";
 import Metronome from "../../../components/Metronome";
 import { useState, useRef } from "react";
-import { Layout, Button } from "@ui-kitten/components";
+import { Layout, Button, Text, Card } from "@ui-kitten/components";
 import StopwatchTimer from "react-native-animated-stopwatch-timer";
 import React from "react";
 
@@ -11,9 +11,16 @@ global.__reanimatedWorkletInit = () => {};
 interface PSUProps {
   setSessionTime: React.Dispatch<React.SetStateAction<number>>;
   unitId: string;
+  unitComposer: string;
+  unitTitle: string;
 }
 
-export default function PSU({ setSessionTime, unitId }: PSUProps) {
+export default function PSU({
+  setSessionTime,
+  unitId,
+  unitComposer,
+  unitTitle,
+}: PSUProps) {
   const [unitTime, setUnitTime] = useState<number>(0);
   console.log(unitTime);
   const stopwatchRef = useRef<any>(null);
@@ -24,39 +31,44 @@ export default function PSU({ setSessionTime, unitId }: PSUProps) {
 
   return (
     <View style={styles.container}>
-      <StopwatchTimer
-        ref={stopwatchRef}
-        containerStyle={styles.stopWatchContainer}
-        animationDuration={0}
-        digitStyle={Platform.select({
-          ios: {
-            width: 32,
-          },
-          android: undefined,
-        })}
-        separatorStyle={Platform.select({
-          ios: {
-            width: 14,
-          },
-          android: undefined,
-        })}
-        textCharStyle={styles.stopWatchChar}
-        trailingZeros={0}
-      />
-      <View style={styles.buttonsContainer}>
-        <Button onPress={() => stopwatchRef.current?.play()}>▶</Button>
-        <Button
-          onPress={() => {
-            stopwatchRef.current?.pause();
-            setUnitTime(stopwatchRef.current?.getSnapshot() / 60000);
-          }}
-        >
-          ||
-        </Button>
-        <Button onPress={endUnit}>⬜</Button>
+      <Card>
+        <Text category="h6">{unitTitle}</Text>
+        <Text category="s1">{unitComposer}</Text>
 
-        {/* TODO -  On unit end, take props and update. Maybe get rid of the extra useState in here?*/}
-      </View>
+        <StopwatchTimer
+          ref={stopwatchRef}
+          containerStyle={styles.stopWatchContainer}
+          animationDuration={0}
+          digitStyle={Platform.select({
+            ios: {
+              width: 32,
+            },
+            android: undefined,
+          })}
+          separatorStyle={Platform.select({
+            ios: {
+              width: 14,
+            },
+            android: undefined,
+          })}
+          textCharStyle={styles.stopWatchChar}
+          trailingZeros={0}
+        />
+        <View style={styles.buttonsContainer}>
+          <Button onPress={() => stopwatchRef.current?.play()}>▶</Button>
+          <Button
+            onPress={() => {
+              stopwatchRef.current?.pause();
+              setUnitTime(stopwatchRef.current?.getSnapshot() / 60000);
+            }}
+          >
+            ||
+          </Button>
+          {/* <Button onPress={endUnit}>⬜</Button> */}
+
+          {/* TODO -  On unit end, take props and update. Maybe get rid of the extra useState in here?*/}
+        </View>
+      </Card>
     </View>
   );
 }
