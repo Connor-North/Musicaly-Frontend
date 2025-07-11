@@ -1,13 +1,13 @@
-import { Text, View, TextInput, StyleSheet, Modal } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, OverflowMenu, MenuItem, Input } from '@ui-kitten/components';
-import React from 'react';
-// const HeartIcon = (props): IconElement => <Icon {...props} name="heart" />;
+import { View, TextInput, StyleSheet, Modal } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Button, OverflowMenu, MenuItem, Input } from "@ui-kitten/components";
+import React from "react";
+
 export default function NewSession() {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [modalVisible, setModalVisible] = React.useState(false);
-  const [title, setTitle] = React.useState('');
-  const [artist, setArtist] = React.useState('');
+  const [title, setTitle] = React.useState("");
+  const [artist, setArtist] = React.useState("");
 
   const toggleMenu = (): void => {
     setMenuVisible(!menuVisible);
@@ -17,14 +17,10 @@ export default function NewSession() {
     setModalVisible(!modalVisible);
   };
 
-  const [value, setValue] = React.useState('');
+  const [value, setValue] = React.useState("");
 
   const renderMenuButton = (): React.ReactElement => (
-    <Button
-      style={styles.button}
-      //accessoryLeft={HeartIcon}
-      onPress={toggleMenu}
-    >
+    <Button style={styles.button} onPress={toggleMenu}>
       Create New Session
     </Button>
   );
@@ -62,12 +58,12 @@ export default function NewSession() {
         >
           <View style={styles.view} className="p-12 rounded-lg bg-white">
             <TextInput
-              placeholder={'title'}
+              placeholder={"title"}
               onChangeText={(text) => setTitle(text)}
               value={title}
             />
             <TextInput
-              placeholder={'artist'}
+              placeholder={"artist"}
               onChangeText={(text) => setArtist(text)}
               value={artist}
             />
@@ -81,21 +77,21 @@ export default function NewSession() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
+    alignItems: "center",
+    backgroundColor: "#ffffff",
   },
-  button: { margin: 2, marginTop: '30%' },
+  button: { margin: 2, marginTop: "30%" },
   input: {
-    width: '75%',
-    position: 'absolute',
-    marginTop: '5%',
+    width: "75%",
+    position: "absolute",
+    marginTop: "5%",
   },
   view: {
-    position: 'relative',
-    padding: '15%',
+    position: "relative",
+    padding: "15%",
   },
   mainView: {
-    justifyContent: 'center',
+    justifyContent: "center",
     flex: 1,
   },
 });

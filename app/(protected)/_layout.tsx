@@ -1,11 +1,10 @@
 import { Tabs } from "expo-router";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import React from "react";
 import * as eva from "@eva-design/eva";
 import { ApplicationProvider } from "@ui-kitten/components";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { StyleSheet } from "react-native";
 
 export default function RootLayout() {
   return (
