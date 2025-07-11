@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { supabase } from "../supabase/auth-helper";
-// import { Button, Input } from "@ui-kitten/components";
-import { Button, TextInput, Text } from "react-native";
+import { Button, Input, Text } from "@ui-kitten/components";
+// import { Button, TextInput, Text } from "react-native";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -55,9 +55,9 @@ export default function Auth() {
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         {!showCreate ? (
-          <TextInput
+          <Input
             label="Name"
-            leftIcon={{ type: "font-awesome", name: "envelope" }}
+            // leftIcon={{ type: "font-awesome", name: "envelope" }}
             onChangeText={(text) => setName(text)}
             value={name}
             placeholder="Joe Bloggs"
@@ -66,9 +66,9 @@ export default function Auth() {
         ) : null}
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <TextInput
+        <Input
           label="Email"
-          leftIcon={{ type: "font-awesome", name: "envelope" }}
+          // leftIcon={{ type: "font-awesome", name: "envelope" }}
           onChangeText={(text) => setEmail(text)}
           value={email}
           placeholder="email@address.com"
@@ -76,9 +76,9 @@ export default function Auth() {
         />
       </View>
       <View style={styles.verticallySpaced}>
-        <TextInput
+        <Input
           label="Password"
-          leftIcon={{ type: "font-awesome", name: "lock" }}
+          // leftIcon={{ type: "font-awesome", name: "lock" }}
           onChangeText={(text) => setPassword(text)}
           value={password}
           secureTextEntry={true}
@@ -88,27 +88,33 @@ export default function Auth() {
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Button
-          title={loading ? "Signing in..." : "Sign In"}
+          // title={loading ? "Signing in..." : "Sign In"}
           disabled={loading}
           onPress={() => signInWithEmail()}
-        />
+        >
+          {loading ? "Signing in..." : "Sign In"}
+        </Button>
       </View>
       <View style={styles.verticallySpaced}>
         {showCreate ? (
           <Button
-            title={"Create Account"}
+            // title={"Create Account"}
             disabled={loading}
             onPress={() => signUpLayout()}
-          />
+          >
+            Create Account
+          </Button>
         ) : null}
       </View>
       <View style={styles.verticallySpaced}>
         {!showCreate ? (
           <Button
-            title={loading ? "Signing up..." : "Sign Up"}
+            // title={loading ? "Signing up..." : "Sign Up"}
             disabled={loading}
             onPress={() => signUpWithEmail()}
-          />
+          >
+            {loading ? "Signing up..." : "Sign Up"}
+          </Button>
         ) : null}
       </View>
     </View>

@@ -1,31 +1,23 @@
-import { View, TextInput, StyleSheet, Modal, ScrollView } from "react-native";
+import { View, StyleSheet, Modal, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, OverflowMenu, MenuItem, Input } from "@ui-kitten/components";
+import { Button, Text, Input, Radio, RadioGroup } from "@ui-kitten/components";
 import React from "react";
 import UnitCard from "@/components/unit-card";
 import UnitList from "@/components/units/UnitList";
+import { useRouter } from "expo-router";
 
 export default function NewSession() {
-  const [menuVisible, setMenuVisible] = React.useState(false);
+  const router = useRouter();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [artist, setArtist] = React.useState("");
-
-  const toggleMenu = (): void => {
-    setMenuVisible(!menuVisible);
-  };
 
   const toggleModal = (): void => {
     setModalVisible(!modalVisible);
   };
 
-  const [value, setValue] = React.useState("");
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  const renderMenuButton = (): React.ReactElement => (
-    <Button style={styles.button} onPress={toggleMenu}>
-      Create New Session
-    </Button>
-  );
   return (
     <ScrollView>
       <SafeAreaView
@@ -36,23 +28,21 @@ export default function NewSession() {
         <Button style={styles.button} onPress={toggleModal}>
           Create New Session
         </Button>
-        <UnitList />
+        <UnitList
+          buttonText="Start"
+          onButtonPress={(item) => {
+            console.log("You clicked:", item.title, item.id);
+            router.push({
+              pathname: "/screens/sessions/PracticeSession",
+              params: {
+                title: item.title,
+                id: item.id,
+                composer: item.composer,
+              },
+            });
+          }}
+        />
 
-        {/* <Input
-          style={styles.input}
-          placeholder="Place your Text"
-          value={value}
-          onChangeText={(nextValue) => setValue(nextValue)}
-        /> */}
-
-        {/* 
-          <MenuItem title="Repertoire" onPress={toggleModal} />
-          <MenuItem title="Technical Exercises" onPress={toggleModal} />
-      */}
-
-        {/* TODO - Move menu options into modal */}
-
-        {/* Create new card list with header to 'practice new piece' */}
         <UnitCard />
         <UnitCard />
 
@@ -70,16 +60,27 @@ export default function NewSession() {
           >
             <View style={styles.view} className="p-12 rounded-lg bg-white">
               <Input
-                placeholder={"title"}
+                placeholder={"Title"}
                 onChangeText={(text) => setTitle(text)}
                 value={title}
               />
               <Input
-                placeholder={"artist"}
+                placeholder={"Artist"}
                 onChangeText={(text) => setArtist(text)}
                 value={artist}
               />
-              <Button onPress={() => setModalVisible(false)}>Create</Button>
+              <RadioGroup
+                selectedIndex={selectedIndex}
+                onChange={(index) => setSelectedIndex(index)}
+              >
+                <Radio>Repertoire</Radio>
+                <Radio>Technical Exercises</Radio>
+              </RadioGroup>
+              {title.length < 2 || artist.length < 2 ? (
+                <Text>Please enter more information</Text>
+              ) : (
+                <Button onPress={() => setModalVisible(false)}>Create</Button>
+              )}
             </View>
           </View>
         </Modal>

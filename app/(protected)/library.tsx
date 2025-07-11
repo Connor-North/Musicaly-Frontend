@@ -8,7 +8,12 @@ export default function Library() {
       className="justify-center flex-1 p-4"
       style={styles.container}
     >
-      <UnitList />
+      <UnitList
+        buttonText="Edit"
+        onButtonPress={(item) => {
+          console.log("You clicked:", item.title);
+        }}
+      />
     </SafeAreaView>
   );
 }
