@@ -1,16 +1,10 @@
 import { View, StyleSheet, Modal, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  Button,
-  Text,
-  Input,
-  IndexPath,
-  Radio,
-  RadioGroup,
-} from "@ui-kitten/components";
+import { Button, Text, Input, Radio, RadioGroup } from "@ui-kitten/components";
 import React from "react";
 import UnitCard from "@/components/unit-card";
 import UnitList from "@/components/units/UnitList";
+import PSU from "@/components/sessions/PSU";
 
 export default function NewSession() {
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -33,6 +27,7 @@ export default function NewSession() {
         <Button style={styles.button} onPress={toggleModal}>
           Create New Session
         </Button>
+        <PSU />
         <UnitList
           buttonText="Start"
           onButtonPress={(item) => {

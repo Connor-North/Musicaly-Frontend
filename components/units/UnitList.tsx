@@ -139,8 +139,6 @@ export default function UnitList({ onButtonPress, buttonText }: UnitListProps) {
           {
             height: screenHeight * 0.4,
             width: screenWidth * 0.9,
-            // maxHeight: screenHeight * 0.4,
-            // maxWidth: screenWidth * 0.9,
           },
         ]}
       >
