@@ -6,6 +6,7 @@ import React, { MouseEventHandler } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { StyleSheet, View } from "react-native";
+import { handleSignOut } from "../../supabase/supabase-signout";
 
 import {
   TopNavigationAction,
@@ -19,10 +20,16 @@ import {
 
 export default function RootLayout() {
   const [menuVisible, setMenuVisible] = React.useState(false);
+  const [disableSignOutButton, setDisableSignOutButton] = React.useState(false);
   const toggleMenu = (): void => {
     setMenuVisible(!menuVisible);
   };
 
+  async function signOut() {
+    setDisableSignOutButton(true);
+    await handleSignOut();
+    setDisableSignOutButton(false);
+  }
   const MenuIcon = (props: IconProps): IconElement => (
     <Icon {...props} name="more-vertical" />
   );
@@ -41,7 +48,7 @@ export default function RootLayout() {
         visible={menuVisible}
         onBackdropPress={toggleMenu}
       >
-        <MenuItem accessoryLeft={LogOutIcon} title="Logout" />
+        <MenuItem accessoryLeft={LogOutIcon} title="Logout" onPress={signOut} />
       </OverflowMenu>
     </View>
   );
