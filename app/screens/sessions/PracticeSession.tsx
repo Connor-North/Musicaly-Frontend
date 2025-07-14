@@ -74,7 +74,7 @@ export default function PracticeSession() {
               <Text>&nbsp;</Text>
               <Button
                 status="danger"
-                onPress={handleSave}
+                onPress={() => router.navigate("/screens/sessions/EndSession")}
                 style={styles.screenButton}
               >
                 End Session
