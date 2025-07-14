@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { Card, Text, Input, Button, ProgressBar } from "@ui-kitten/components";
-import { SafeAreaView, FlatList, StyleSheet, View } from "react-native";
+import {
+  SafeAreaView,
+  FlatList,
+  StyleSheet,
+  View,
+  Pressable,
+} from "react-native";
 
 interface Goal {
   id?: string;
@@ -11,7 +17,7 @@ interface Goal {
   created_at: string;
 }
 
-const [data, setData] = useState<Goal[]>([
+const initialGoals: Goal[] = [
   {
     id: "dd59c8c7-a8a1-4b65-9db2-5d787ab1dd4d",
     student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044f",
@@ -36,10 +42,11 @@ const [data, setData] = useState<Goal[]>([
     goal_status: 4,
     created_at: "2025-07-05T12:04:28.149551+00:00",
   },
-]);
+];
 
 export default function MonthlyGoalsForm() {
   // NOTE - do I need to count goal count?
+  const [data, setData] = useState<Goal[]>(initialGoals);
   const [goalCount, setGoalCount] = useState(data.length);
   const [newGoals, setNewGoals] = useState<string[]>(
     Array(5 - data.length).fill("")
@@ -59,20 +66,25 @@ export default function MonthlyGoalsForm() {
       return;
     }
 
-    // Build complete newGoal matching your Goal interface
     const newGoal: Goal = {
-      student_id: "some-student-id", // FIXME - replace with actual value, extract from data, or from session object of Supabase session?
+      id: Math.random().toString(),
+      student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044z", // FIXME - replace with actual value, extract from data, or from session object of Supabase session?
       goal_description: goalText,
       goal_date: new Date().toISOString(), //FIXME - Is this valid date format for Supabase TimeStampZ - check vs reference object
       goal_status: 0, // Set at 0, as new goal will be unstarted...?
       created_at: new Date().toISOString(), //FIXME - Is this valid date format for Supabase TimeStampZ
     };
 
-    setData([...data, newGoal]);
+    setData((currentData) => {
+      const updatedData = [...currentData, newGoal];
+      return updatedData;
+    });
 
-    const updatedNewGoals = [...newGoals];
-    updatedNewGoals.splice(index, 1);
-    setNewGoals(updatedNewGoals);
+    setNewGoals((currentGoals) => {
+      const updatedNewGoals = [...currentGoals];
+      updatedNewGoals.splice(index, 1);
+      return updatedNewGoals;
+    });
 
     //NOTE - Consider - handle logic here for updating on Supabase? Or render all locally and handle elsewhere?
   };
@@ -85,7 +97,12 @@ export default function MonthlyGoalsForm() {
           renderItem={({ item }) => (
             <>
               <Text style={styles.item}>{item.goal_description}</Text>
-              <ProgressBar animating={false} progress={item.goal_status / 5} />
+              <View>
+                <ProgressBar
+                  animating={false}
+                  progress={item.goal_status / 5}
+                />
+              </View>
             </>
           )}
           keyExtractor={(item) => item.created_at}
@@ -95,22 +112,19 @@ export default function MonthlyGoalsForm() {
           ListHeaderComponent={() => (
             <Text style={styles.title}>Set and check your goals! 🎯</Text>
           )}
-          ListFooterComponent={() => (
-            <>
-              {newGoals.map((goal, index) => (
-                <View key={index} style={styles.inputContainer}>
-                  <Input
-                    placeholder={`Add goal #${data.length + index + 1}`}
-                    value={goal}
-                    onChangeText={(text) => handleInputChange(text, index)}
-                    style={styles.input}
-                  />
-                  <Button onPress={() => addGoal(index)}>Add Goal!</Button>
-                </View>
-              ))}
-            </>
-          )}
         />
+
+        {newGoals.map((goal, index) => (
+          <View key={index} style={styles.inputContainer}>
+            <Input
+              placeholder={`Add goal #${data.length + index + 1}`}
+              value={goal}
+              onChangeText={(text) => handleInputChange(text, index)}
+              style={styles.input}
+            />
+            <Button onPress={() => addGoal(index)}>Add Goal!</Button>
+          </View>
+        ))}
       </Card>
     </SafeAreaView>
   );
