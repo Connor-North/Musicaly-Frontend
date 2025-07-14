@@ -1,17 +1,14 @@
 import { Tabs } from "expo-router";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import React from "react";
-import * as eva from "@eva-design/eva";
-import { ApplicationProvider } from "@ui-kitten/components";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
+import CustomHeader from "@/components/CustomHeader";
+
 export default function RootLayout() {
   return (
-    // <ApplicationProvider {...eva} theme={eva.light}>
-    //   <SafeAreaProvider>
     <React.Fragment>
-      <Tabs>
+      <Tabs screenOptions={{ header: () => <CustomHeader /> }}>
         <Tabs.Screen
           name="index"
           options={{
@@ -22,6 +19,7 @@ export default function RootLayout() {
             ),
           }}
         />
+
         <Tabs.Screen
           name="dashboard"
           options={{
@@ -32,6 +30,7 @@ export default function RootLayout() {
             ),
           }}
         />
+
         <Tabs.Screen
           name="library"
           options={{
@@ -42,6 +41,7 @@ export default function RootLayout() {
             ),
           }}
         />
+
         <Tabs.Screen
           name="new-session"
           options={{
@@ -54,7 +54,5 @@ export default function RootLayout() {
         />
       </Tabs>
     </React.Fragment>
-    //   </SafeAreaProvider>
-    // </ApplicationProvider>
   );
 }
