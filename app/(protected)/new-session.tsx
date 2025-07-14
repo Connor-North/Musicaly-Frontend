@@ -1,79 +1,91 @@
-import { View, TextInput, StyleSheet, Modal } from "react-native";
+import { View, StyleSheet, Modal, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, OverflowMenu, MenuItem, Input } from "@ui-kitten/components";
+import { Button, Text, Input, Radio, RadioGroup } from "@ui-kitten/components";
 import React from "react";
+import UnitCard from "@/components/unit-card";
+import UnitList from "@/components/units/UnitList";
+import { useRouter } from "expo-router";
 
 export default function NewSession() {
-  const [menuVisible, setMenuVisible] = React.useState(false);
+  const router = useRouter();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [artist, setArtist] = React.useState("");
-
-  const toggleMenu = (): void => {
-    setMenuVisible(!menuVisible);
-  };
 
   const toggleModal = (): void => {
     setModalVisible(!modalVisible);
   };
 
-  const [value, setValue] = React.useState("");
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
 
-  const renderMenuButton = (): React.ReactElement => (
-    <Button style={styles.button} onPress={toggleMenu}>
-      Create New Session
-    </Button>
-  );
   return (
-    <SafeAreaView
-      className="justify-center flex-1 p-4"
-      style={styles.container}
-    >
-      <Input
-        style={styles.input}
-        placeholder="Place your Text"
-        value={value}
-        onChangeText={(nextValue) => setValue(nextValue)}
-      />
-      <OverflowMenu
-        fullWidth={true}
-        onSelect={toggleMenu}
-        visible={menuVisible}
-        anchor={renderMenuButton}
-        onBackdropPress={toggleMenu}
+    <ScrollView>
+      <SafeAreaView
+        className="justify-center flex-1 p-4"
+        style={styles.container}
       >
-        <MenuItem title="Repertoire" onPress={toggleModal} />
-        <MenuItem title="Technical Exercises" onPress={toggleModal} />
-      </OverflowMenu>
+        {/* TODO - Arrange items on page with layout containers */}
+        <Button style={styles.button} onPress={toggleModal}>
+          Create New Session
+        </Button>
+        <UnitList
+          buttonText="Start"
+          onButtonPress={(item) => {
+            console.log("You clicked:", item.title, item.id);
+            router.push({
+              pathname: "/screens/sessions/PracticeSession",
+              params: {
+                title: item.title,
+                id: item.id,
+                composer: item.composer,
+              },
+            });
+          }}
+        />
 
-      <Modal
-        visible={modalVisible}
-        //animationType="slide"
-        //presentationStyle="pageSheet"
-        onRequestClose={() => {
-          setModalVisible(false);
-        }}
-      >
-        <View
-          style={styles.mainView}
-          className="flex-1 items-center justify-center"
+        <UnitCard />
+        <UnitCard />
+
+        <Modal
+          visible={modalVisible}
+          animationType="slide"
+          presentationStyle="pageSheet"
+          onRequestClose={() => {
+            setModalVisible(false);
+          }}
         >
-          <View style={styles.view} className="p-12 rounded-lg bg-white">
-            <TextInput
-              placeholder={"title"}
-              onChangeText={(text) => setTitle(text)}
-              value={title}
-            />
-            <TextInput
-              placeholder={"artist"}
-              onChangeText={(text) => setArtist(text)}
-              value={artist}
-            />
-            <Button onPress={() => setModalVisible(false)}>Create</Button>
+          <View
+            style={styles.mainView}
+            className="flex-1 items-center justify-center"
+          >
+            <View style={styles.view} className="p-12 rounded-lg bg-white">
+              <Input
+                placeholder={"Title"}
+                onChangeText={(text) => setTitle(text)}
+                value={title}
+              />
+              <Input
+                placeholder={"Artist"}
+                onChangeText={(text) => setArtist(text)}
+                value={artist}
+              />
+              <RadioGroup
+                selectedIndex={selectedIndex}
+                onChange={(index) => setSelectedIndex(index)}
+              >
+                <Radio>Repertoire</Radio>
+                <Radio>Technical Exercises</Radio>
+              </RadioGroup>
+              {title.length < 2 || artist.length < 2 ? (
+                <Text>Please enter more information</Text>
+              ) : (
+                <Button onPress={() => setModalVisible(false)}>Create</Button>
+              )}
+            </View>
           </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
+        </Modal>
+      </SafeAreaView>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({
@@ -82,7 +94,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#ffffff",
   },
-  button: { margin: 2, marginTop: "30%" },
+  button: { margin: 2, marginTop: "10%", marginBottom: "5%" },
   input: {
     width: "75%",
     position: "absolute",
