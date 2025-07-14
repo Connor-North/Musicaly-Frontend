@@ -42,15 +42,14 @@ export default function RootLayout() {
     <TopNavigationAction icon={MenuIcon} onPress={toggleMenu} />
   );
   const renderOverflowMenuAction = (): React.ReactElement => (
-    <View style={styles.container}>
-      <OverflowMenu
-        anchor={renderMenuAction}
-        visible={menuVisible}
-        onBackdropPress={toggleMenu}
-      >
-        <MenuItem accessoryLeft={LogOutIcon} title="Logout" onPress={signOut} />
-      </OverflowMenu>
-    </View>
+    <OverflowMenu
+      anchor={renderMenuAction}
+      visible={menuVisible}
+      onBackdropPress={toggleMenu}
+      placement="bottom end"
+    >
+      <MenuItem accessoryLeft={LogOutIcon} title="Logout" onPress={signOut} />
+    </OverflowMenu>
   );
   return (
     // <ApplicationProvider {...eva} theme={eva.light}>
@@ -110,12 +109,3 @@ export default function RootLayout() {
     //</ApplicationProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    backgroundColor: "#ff0000",
-  },
-});
