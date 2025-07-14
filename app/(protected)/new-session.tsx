@@ -28,7 +28,6 @@ export default function NewSession() {
         <UnitList
           buttonText="Start"
           onButtonPress={(item) => {
-            console.log("You clicked:", item.title, item.id);
             router.push({
               pathname: "/screens/sessions/PracticeSession",
               params: {
@@ -40,8 +39,25 @@ export default function NewSession() {
           }}
         />
 
-        <UnitCard artist="Beethoven" title="Moonlight Sonata" />
-        <UnitCard artist="Beethoven" title="Moonlight Sonata" />
+        <Button style={styles.button} onPress={toggleModal}>
+          Add New Piece
+        </Button>
+
+        <Button
+          style={styles.button}
+          onPress={() => {
+            router.push({
+              pathname: "/screens/sessions/PracticeSession",
+              params: {
+                title: "Free Play",
+                id: "",
+                composer: "Sight read, create, jam..!",
+              },
+            });
+          }}
+        >
+          Free Practice
+        </Button>
 
         <Modal
           visible={modalVisible}
@@ -114,7 +130,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#ffffff",
   },
-  button: { margin: 2 },
+  button: { margin: 2, width: 200 },
   input: {
     width: "75%",
     position: "absolute",

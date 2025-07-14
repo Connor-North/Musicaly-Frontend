@@ -63,7 +63,7 @@ export default function PracticeSession() {
           <Text>&nbsp;</Text>
 
           <Text>&nbsp;</Text>
-          {note.length > 10 ? (
+          {note.length > 10 || unitTitle === "Free Play" ? (
             <>
               <Button
                 onPress={() => router.navigate("/(protected)/new-session")}
