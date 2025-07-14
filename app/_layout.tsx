@@ -3,6 +3,9 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "../supabase/auth-helper";
 import { Session } from "@supabase/supabase-js";
 import { View, ActivityIndicator } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import * as eva from "@eva-design/eva";
+import { ApplicationProvider } from "@ui-kitten/components";
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
@@ -53,5 +56,11 @@ export default function RootLayout() {
   }
 
   // FIXME: Return Slot component to render children
-  return <Slot />;
+  return (
+    <ApplicationProvider {...eva} theme={eva.light}>
+      <SafeAreaProvider>
+        <Slot />;
+      </SafeAreaProvider>
+    </ApplicationProvider>
+  );
 }
