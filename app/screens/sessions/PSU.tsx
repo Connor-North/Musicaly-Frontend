@@ -92,6 +92,7 @@ export default function PSU({
           {/* TODO -  On unit end, take props and update. Maybe get rid of the extra useState in here?*/}
         </View>
       </Card>
+      <Metronome tempo={80} />
     </View>
   );
 }
