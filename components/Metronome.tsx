@@ -4,13 +4,13 @@ import Slider from "@react-native-community/slider";
 import { Audio } from "expo-av";
 interface MetronomeProps {
   tempo?: number;
-  beatsinbar?: number;
-  subdivision?: number;
+  beatsInBar?: number;
+  subDivision?: number;
 }
 const Metronome: React.FC<MetronomeProps> = ({
   tempo = 80,
-  beatsinbar = 4,
-  subdivision = 0,
+  beatsInBar = 4,
+  subDivision = 0,
 }) => {
   const [bpm, setBpm] = useState(tempo);
   const [isPlaying, setIsPlaying] = useState(false);
