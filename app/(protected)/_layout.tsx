@@ -1,8 +1,8 @@
 import { Tabs } from "expo-router";
-import React, { MouseEventHandler } from "react";
+import React from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { StyleSheet, View } from "react-native";
+
 import CustomHeader from "@/components/CustomHeader";
 
 export default function RootLayout() {

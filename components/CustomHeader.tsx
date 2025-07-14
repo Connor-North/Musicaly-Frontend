@@ -1,6 +1,5 @@
 import { handleSignOut } from "./../supabase/supabase-signout";
 import React from "react";
-import { StyleSheet } from "react-native";
 import {
   TopNavigationAction,
   Icon,
@@ -10,7 +9,6 @@ import {
   MenuItem,
   TopNavigation,
 } from "@ui-kitten/components";
-import { SafeAreaView } from "react-native-safe-area-context";
 export default function CustomHeader() {
   const [menuVisible, setMenuVisible] = React.useState(false);
   const [disableSignOutButton, setDisableSignOutButton] = React.useState(false);
@@ -35,21 +33,14 @@ export default function CustomHeader() {
     <TopNavigationAction icon={MenuIcon} onPress={toggleMenu} />
   );
   const renderOverflowMenuAction = (): React.ReactElement => (
-    <SafeAreaView>
-      <OverflowMenu
-        anchor={renderMenuAction}
-        visible={menuVisible}
-        onBackdropPress={toggleMenu}
-        placement="bottom end"
-      >
-        <MenuItem
-          style={styles.menuItem}
-          accessoryLeft={LogOutIcon}
-          title="Logout"
-          onPress={signOut}
-        />
-      </OverflowMenu>
-    </SafeAreaView>
+    <OverflowMenu
+      anchor={renderMenuAction}
+      visible={menuVisible}
+      placement="bottom end"
+      onBackdropPress={toggleMenu}
+    >
+      <MenuItem accessoryLeft={LogOutIcon} title="Logout" onPress={signOut} />
+    </OverflowMenu>
   );
   return <TopNavigation accessoryRight={renderOverflowMenuAction} />;
 }
