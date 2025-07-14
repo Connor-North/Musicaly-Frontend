@@ -84,6 +84,7 @@ export default function PracticeSession() {
             onChangeText={(value) => setNote(value)}
             style={{ width: "80%" }}
           />
+          <Button>Next piece</Button>
           <Button status="danger" onPress={handleSave}>
             End Session
           </Button>
