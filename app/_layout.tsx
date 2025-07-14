@@ -6,6 +6,7 @@ import { View, ActivityIndicator } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import * as eva from "@eva-design/eva";
 import { ApplicationProvider } from "@ui-kitten/components";
+import { SessionProvider } from "@/assets/contexts/sessionTime";
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
@@ -59,7 +60,9 @@ export default function RootLayout() {
   return (
     <ApplicationProvider {...eva} theme={eva.light}>
       <SafeAreaProvider>
-        <Slot />;
+        <SessionProvider>
+          <Slot />;
+        </SessionProvider>
       </SafeAreaProvider>
     </ApplicationProvider>
   );

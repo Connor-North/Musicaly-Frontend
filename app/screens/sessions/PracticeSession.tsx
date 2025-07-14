@@ -6,14 +6,19 @@ import {
   Text,
   Card,
 } from "@ui-kitten/components";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { StyleSheet, Modal, ScrollView } from "react-native";
 import PSU from "./PSU";
 import { useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { SessionTimeContext } from "@/assets/contexts/sessionTime";
 
 export default function PracticeSession() {
-  const [sessionTime, setSessionTime] = useState<number>(0);
+  const context = useContext(SessionTimeContext);
+  if (!context) {
+    throw new Error("SessionTimeContext must be used within a SessionProvider");
+  }
+  const { sessionTime, setSessionTime } = context;
   const { title, id, composer } = useLocalSearchParams();
   const unitId = Array.isArray(id) ? id[0] : id;
   const unitTitle = Array.isArray(title) ? title[0] : title;
