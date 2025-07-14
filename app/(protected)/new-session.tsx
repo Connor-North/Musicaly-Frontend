@@ -13,10 +13,11 @@ export default function NewSession() {
   const [modalVisible, setModalVisible] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [artist, setArtist] = React.useState("");
+  const [remountKey, setRemountKey] = React.useState<number>(0);
 
   async function insertUnit() {
     let collection;
-    if (selectedIndex === 1) {
+    if (selectedIndex === 0) {
       collection = "Repertoire";
     } else {
       collection = "Technical Exercises";
@@ -75,6 +76,7 @@ export default function NewSession() {
       >
         {/* TODO - Arrange items on page with layout containers */}
         <UnitList
+          remountKey={remountKey}
           buttonText="Start"
           onButtonPress={(item) => {
             router.push({

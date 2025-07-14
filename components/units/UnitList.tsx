@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, TextInput, Dimensions } from "react-native";
 import { List, ListItem, Button } from "@ui-kitten/components";
+import { supabase } from "@/supabase/auth-helper";
 
 interface IListItem {
   id: string;
@@ -18,7 +19,7 @@ interface IListItem {
 // TODO - Add 'edit functionality'
 // TODO - Make list item 'clickable' to show individual unit stats and comments
 
-const data: IListItem[] = [
+let unitData: IListItem[] = [
   {
     id: "b111895c-4aab-4055-96e9-d95458b00f50",
     title: "Nocturne Op. 9 No. 2",
@@ -90,21 +91,56 @@ const data: IListItem[] = [
 interface UnitListProps {
   onButtonPress: (item: IListItem) => void;
   buttonText: string;
+  remountKey: any;
 }
 
-export default function UnitList({ onButtonPress, buttonText }: UnitListProps) {
+export default function UnitList({
+  onButtonPress,
+  buttonText,
+  remountKey,
+}: UnitListProps) {
   const [query, setQuery] = useState("");
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
 
+  useEffect(() => {
+    async function getUnitsForCurrentUser() {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        const { data, error } = await supabase
+          .from("units")
+          .select(
+            "id, title, composer, tempo_bpm, beats_in_bar, subdivision, collection, created_at, updated_at"
+          )
+          .eq("student_id", user?.id);
+
+        if (error) {
+          console.error("Error fetching units:", error.message);
+          // TODO - Deal with error handling
+          return;
+        }
+
+        if (data) {
+          unitData = data;
+          console.log("Units for current user:", data);
+        }
+      } catch (error) {
+        console.error("Error fetching units:", error);
+      }
+    }
+    getUnitsForCurrentUser();
+  }, [remountKey]);
+
   const filteredListData = (
     query
-      ? data.filter(
+      ? unitData.filter(
           (item) =>
             item.title.toLowerCase().includes(query.toLowerCase()) ||
             item.composer.toLowerCase().includes(query.toLowerCase())
         )
-      : data
+      : unitData
   ).sort((a, b) => {
     return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
   });
