@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { View, Button, StyleSheet, Text } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Button, Text } from "@ui-kitten/components";
 import Slider from "@react-native-community/slider";
 import { Audio } from "expo-av";
 interface MetronomeProps {
@@ -28,11 +29,13 @@ const Metronome: React.FC<MetronomeProps> = ({
       clickSound.current?.unloadAsync();
     };
   }, []);
+
   const playClick = async () => {
     if (clickSound.current) {
       await clickSound.current.replayAsync();
     }
   };
+
   const startMetronome = () => {
     if (isPlaying) return;
     setIsPlaying(true);
@@ -40,6 +43,7 @@ const Metronome: React.FC<MetronomeProps> = ({
     const interval = 60000 / bpm;
     intervalRef.current = setInterval(playClick, interval) as unknown as number;
   };
+
   const stopMetronome = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     setIsPlaying(false);
@@ -55,15 +59,17 @@ const Metronome: React.FC<MetronomeProps> = ({
         minimumValue={40}
         maximumValue={240}
         value={bpm}
+        thumbTintColor={"#3366ff"}
+        minimumTrackTintColor={"#A6C1FF"}
         onValueChange={(value) => {
           setBpm(Math.round(value));
           if (isPlaying) {
-            stopMetronome();
             startMetronome();
+            stopMetronome();
           }
         }}
       />
-      <Button title={isPlaying ? "Stop" : "Start"} onPress={toggleMetronome} />
+      <Button onPress={toggleMetronome}>{isPlaying ? "Stop" : "Start"}</Button>
     </View>
   );
 };
