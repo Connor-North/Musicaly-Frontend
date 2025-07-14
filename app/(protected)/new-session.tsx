@@ -5,12 +5,61 @@ import React from "react";
 import UnitCard from "@/components/unit-card";
 import UnitList from "@/components/units/UnitList";
 import { useRouter } from "expo-router";
+import { supabase } from "@/supabase/auth-helper";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 export default function NewSession() {
   const router = useRouter();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [artist, setArtist] = React.useState("");
+
+  async function insertUnit() {
+    let collection;
+    if (selectedIndex === 1) {
+      collection = "Repertoire";
+    } else {
+      collection = "Technical Exercises";
+    }
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("units")
+        .insert([
+          {
+            student_id: user?.id,
+            composer: artist,
+            created_at: new Date().toLocaleString("en-US", {
+              timeZone: "Europe/London",
+            }),
+            title: title,
+            collection: collection,
+          },
+        ])
+        .select("id, composer, created_at, title, collection");
+
+      if (error) {
+        console.error("Error inserting unit:", error.message);
+
+        return;
+      }
+
+      if (data) {
+        console.log("New unit inserted:", data[0]);
+        router.push({
+          pathname: "/screens/sessions/PracticeSession",
+          params: {
+            title: title,
+            composer: artist,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error inserting unit:", error);
+    }
+  }
 
   const toggleModal = (): void => {
     setModalVisible(!modalVisible);
@@ -105,13 +154,7 @@ export default function NewSession() {
               ) : (
                 <Button
                   onPress={() => {
-                    router.push({
-                      pathname: "/screens/sessions/PracticeSession",
-                      params: {
-                        title: title,
-                        composer: artist,
-                      },
-                    });
+                    insertUnit();
                   }}
                 >
                   Let's practice!
