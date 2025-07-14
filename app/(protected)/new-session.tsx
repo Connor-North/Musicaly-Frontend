@@ -43,8 +43,8 @@ export default function NewSession() {
           }}
         />
 
-        <UnitCard />
-        <UnitCard />
+        <UnitCard artist="Beethoven" title="Moonlight Sonata" />
+        <UnitCard artist="Beethoven" title="Moonlight Sonata" />
 
         <Modal
           visible={modalVisible}
