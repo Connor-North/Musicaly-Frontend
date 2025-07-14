@@ -5,7 +5,7 @@ import React, { MouseEventHandler } from "react";
 //import { ApplicationProvider } from "@ui-kitten/components";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-//import { Stylesheet, Views } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import {
   TopNavigationAction,
@@ -35,13 +35,15 @@ export default function RootLayout() {
     <TopNavigationAction icon={MenuIcon} onPress={toggleMenu} />
   );
   const renderOverflowMenuAction = (): React.ReactElement => (
-    <OverflowMenu
-      anchor={renderMenuAction}
-      visible={menuVisible}
-      onBackdropPress={toggleMenu}
-    >
-      <MenuItem accessoryLeft={LogOutIcon} title="Logout" />
-    </OverflowMenu>
+    <View style={styles.container}>
+      <OverflowMenu
+        anchor={renderMenuAction}
+        visible={menuVisible}
+        onBackdropPress={toggleMenu}
+      >
+        <MenuItem accessoryLeft={LogOutIcon} title="Logout" />
+      </OverflowMenu>
+    </View>
   );
   return (
     // <ApplicationProvider {...eva} theme={eva.light}>
@@ -49,6 +51,7 @@ export default function RootLayout() {
 
     <React.Fragment>
       <TopNavigation accessoryRight={renderOverflowMenuAction} />
+
       <Tabs>
         <Tabs.Screen
           name="index"
@@ -100,3 +103,12 @@ export default function RootLayout() {
     //</ApplicationProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    backgroundColor: "#ff0000",
+  },
+});
