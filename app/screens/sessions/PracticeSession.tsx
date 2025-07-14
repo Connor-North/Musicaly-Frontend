@@ -51,25 +51,6 @@ export default function PracticeSession() {
             unitComposer={unitComposer}
             unitTitle={unitTitle}
           />
-          <Modal
-            visible={visible}
-            backdropColor={"rgba(0, 0, 0, 0.5)"}
-            presentationStyle="overFullScreen"
-            style={styles.container}
-          >
-            <Card disabled={true} style={{ width: "80%" }}>
-              <Text>
-                You've not entered any notes for your practice of {unitTitle} by{" "}
-                {unitComposer} ...
-                <p>Do you want to add any notes, or end the session?</p>
-              </Text>
-              <Button onPress={() => setVisible(false)}>Add Notes</Button>
-              <p></p>
-              <Button status="danger" onPress={() => setVisible(false)}>
-                End Session
-              </Button>
-            </Card>
-          </Modal>
           <Text>&nbsp;</Text>
           <Input
             multiline={true}
