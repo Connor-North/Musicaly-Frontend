@@ -119,7 +119,7 @@ export default function UnitList({ onButtonPress, buttonText }: UnitListProps) {
       title={item.title}
       description={item.composer}
       accessoryRight={
-        <Button size="tiny" onPress={() => onButtonPress(item)}>
+        <Button size="small" onPress={() => onButtonPress(item)}>
           {buttonText}
         </Button>
       }

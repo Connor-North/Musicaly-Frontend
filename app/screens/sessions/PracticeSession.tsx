@@ -6,32 +6,28 @@ import {
   Text,
   Card,
 } from "@ui-kitten/components";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { StyleSheet, Modal, ScrollView } from "react-native";
 import PSU from "./PSU";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { SessionTimeContext } from "@/assets/contexts/sessionTime";
 
 export default function PracticeSession() {
-  const [sessionTime, setSessionTime] = useState<number>(0);
+  const context = useContext(SessionTimeContext);
+  if (!context) {
+    throw new Error("SessionTimeContext must be used within a SessionProvider");
+  }
+  const { sessionTime, setSessionTime } = context;
   const { title, id, composer } = useLocalSearchParams();
   const unitId = Array.isArray(id) ? id[0] : id;
   const unitTitle = Array.isArray(title) ? title[0] : title;
   const unitComposer = Array.isArray(composer) ? composer[0] : composer;
-  const [isSaved, setIsSaved] = useState<boolean>(false);
   const [note, setNote] = useState<string>("");
   const [visible, setVisible] = useState(false);
+  const router = useRouter();
 
-  const handleSave = () => {
-    if (note.length < 2) {
-      setVisible(true);
-      return;
-    }
-    setIsSaved(true);
-    setTimeout(() => {
-      setIsSaved(false);
-    }, 3000);
-  };
+  const handleSave = () => {};
 
   const useInputState = (initialValue = ""): InputProps => {
     const [value, setValue] = useState(initialValue);
@@ -55,26 +51,7 @@ export default function PracticeSession() {
             unitComposer={unitComposer}
             unitTitle={unitTitle}
           />
-          <Modal
-            visible={visible}
-            backdropColor={"rgba(0, 0, 0, 0.5)"}
-            presentationStyle="overFullScreen"
-            style={styles.container}
-          >
-            <Card disabled={true} style={{ width: "80%" }}>
-              <Text>
-                You've not entered any notes for your practice of {unitTitle} by{" "}
-                {unitComposer} ...
-                <p>Do you want to add any notes, or end the session?</p>
-              </Text>
-              <Button onPress={() => setVisible(false)}>Add Notes</Button>
-              <p></p>
-              <Button status="danger" onPress={() => setVisible(false)}>
-                End Session
-              </Button>
-            </Card>
-          </Modal>
-          {isSaved ? <Text>"Note Saved"</Text> : <Text>&nbsp;</Text>}
+          <Text>&nbsp;</Text>
           <Input
             multiline={true}
             textStyle={styles.inputTextStyle}
@@ -82,11 +59,35 @@ export default function PracticeSession() {
             {...multilineInputState}
             value={note}
             onChangeText={(value) => setNote(value)}
-            style={{ width: "80%" }}
           />
-          <Button status="danger" onPress={handleSave}>
-            End Session
-          </Button>
+          <Text>&nbsp;</Text>
+
+          <Text>&nbsp;</Text>
+          {note.length > 10 ? (
+            <>
+              <Button
+                onPress={() => router.navigate("/(protected)/new-session")}
+                style={styles.screenButton}
+              >
+                Next Piece
+              </Button>
+              <Text>&nbsp;</Text>
+              <Button
+                status="danger"
+                onPress={handleSave}
+                style={styles.screenButton}
+              >
+                End Session
+              </Button>
+            </>
+          ) : (
+            <Card style={{ width: 270 }}>
+              <Text status="primary" category="h6">
+                Remember to add a note before moving on.{"\n"}We learn quicker
+                with short reflections on each piece we practice. 🧠
+              </Text>
+            </Card>
+          )}
         </SafeAreaView>
       </ScrollView>
     </>
@@ -104,5 +105,10 @@ const styles = StyleSheet.create({
   },
   inputTextStyle: {
     minHeight: 100,
+    width: 240,
+    padding: 0,
+  },
+  screenButton: {
+    width: 240,
   },
 });

@@ -7,6 +7,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import * as eva from "@eva-design/eva";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
+import { SessionProvider } from "@/assets/contexts/sessionTime";
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
@@ -61,7 +62,9 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={eva.light}>
-        <Slot />;
+        <SessionProvider>
+          <Slot />;
+        </SessionProvider>
       </ApplicationProvider>
     </SafeAreaProvider>
   );

@@ -1,4 +1,4 @@
-import { View, StyleSheet, Modal, ScrollView } from "react-native";
+import { View, StyleSheet, Modal, ScrollView, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Text, Input, Radio, RadioGroup } from "@ui-kitten/components";
 import React from "react";
@@ -25,9 +25,6 @@ export default function NewSession() {
         style={styles.container}
       >
         {/* TODO - Arrange items on page with layout containers */}
-        <Button style={styles.button} onPress={toggleModal}>
-          Create New Session
-        </Button>
         <UnitList
           buttonText="Start"
           onButtonPress={(item) => {
@@ -54,21 +51,29 @@ export default function NewSession() {
             setModalVisible(false);
           }}
         >
-          <View
-            style={styles.mainView}
-            className="flex-1 items-center justify-center"
-          >
+          <View style={styles.mainView}>
             <View style={styles.view} className="p-12 rounded-lg bg-white">
+              <Text category="h3">
+                Please enter the details for the new piece you'd like to
+                practice.
+              </Text>
+              <Text>&nbsp;</Text>
               <Input
                 placeholder={"Title"}
                 onChangeText={(text) => setTitle(text)}
                 value={title}
               />
+              <Text>&nbsp;</Text>
               <Input
                 placeholder={"Artist"}
                 onChangeText={(text) => setArtist(text)}
                 value={artist}
               />
+              <Text>&nbsp;</Text>
+              <Text category="h6">
+                Is this piece part of your repertoire, or a technical exercise?
+              </Text>
+              <Text>&nbsp;</Text>
               <RadioGroup
                 selectedIndex={selectedIndex}
                 onChange={(index) => setSelectedIndex(index)}
@@ -76,10 +81,25 @@ export default function NewSession() {
                 <Radio>Repertoire</Radio>
                 <Radio>Technical Exercises</Radio>
               </RadioGroup>
-              {title.length < 2 || artist.length < 2 ? (
-                <Text>Please enter more information</Text>
+              <Text>&nbsp;</Text>
+              {title.length < 1 || artist.length < 1 ? (
+                <Text style={{ color: "red" }}>
+                  Please ensure all fields are complete
+                </Text>
               ) : (
-                <Button onPress={() => setModalVisible(false)}>Create</Button>
+                <Button
+                  onPress={() => {
+                    router.push({
+                      pathname: "/screens/sessions/PracticeSession",
+                      params: {
+                        title: title,
+                        composer: artist,
+                      },
+                    });
+                  }}
+                >
+                  Let's practice!
+                </Button>
               )}
             </View>
           </View>
@@ -94,11 +114,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#ffffff",
   },
-  button: { margin: 2, marginTop: "10%", marginBottom: "5%" },
+  button: { margin: 2 },
   input: {
     width: "75%",
     position: "absolute",
     marginTop: "5%",
+    paddingTop: 2,
   },
   view: {
     position: "relative",
@@ -106,6 +127,8 @@ const styles = StyleSheet.create({
   },
   mainView: {
     justifyContent: "center",
+    alignItems: "center",
+    alignContent: "space-between",
     flex: 1,
   },
 });
