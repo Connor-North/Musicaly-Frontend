@@ -4,8 +4,9 @@ import { supabase } from "../supabase/auth-helper";
 import { Session } from "@supabase/supabase-js";
 import { View, ActivityIndicator } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 import * as eva from "@eva-design/eva";
-import { ApplicationProvider } from "@ui-kitten/components";
+import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { SessionProvider } from "@/assets/contexts/sessionTime";
 
 export default function RootLayout() {
@@ -58,12 +59,13 @@ export default function RootLayout() {
 
   // FIXME: Return Slot component to render children
   return (
-    <ApplicationProvider {...eva} theme={eva.light}>
-      <SafeAreaProvider>
+    <SafeAreaProvider>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider {...eva} theme={eva.light}>
         <SessionProvider>
           <Slot />;
         </SessionProvider>
-      </SafeAreaProvider>
-    </ApplicationProvider>
+      </ApplicationProvider>
+    </SafeAreaProvider>
   );
 }
