@@ -1,7 +1,7 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Platform, StyleSheet, View } from "react-native";
 import Metronome from "../../../components/Metronome";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Layout, Button, Text, Card } from "@ui-kitten/components";
 import StopwatchTimer from "react-native-animated-stopwatch-timer";
 import React from "react";
@@ -21,6 +21,22 @@ export default function PSU({
   unitComposer,
   unitTitle,
 }: PSUProps) {
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (isRunning) {
+      interval = setInterval(() => {
+        setSessionTime((prev) => prev + 1);
+      }, 60000);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isRunning]);
+
   const [unitTime, setUnitTime] = useState<number>(0);
   console.log(unitTime);
   const stopwatchRef = useRef<any>(null);
@@ -34,7 +50,6 @@ export default function PSU({
       <Card>
         <Text category="h6">{unitTitle}</Text>
         <Text category="s1">{unitComposer}</Text>
-
         <StopwatchTimer
           ref={stopwatchRef}
           containerStyle={styles.stopWatchContainer}
@@ -55,10 +70,18 @@ export default function PSU({
           trailingZeros={0}
         />
         <View style={styles.buttonsContainer}>
-          <Button onPress={() => stopwatchRef.current?.play()}>▶</Button>
+          <Button
+            onPress={() => {
+              stopwatchRef.current?.play();
+              setIsRunning(true);
+            }}
+          >
+            ▶
+          </Button>
           <Button
             onPress={() => {
               stopwatchRef.current?.pause();
+              setIsRunning(false);
               setUnitTime(stopwatchRef.current?.getSnapshot() / 60000);
             }}
           >
@@ -79,6 +102,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   stopWatchContainer: {
+    marginTop: 20,
     paddingVertical: 4,
     paddingHorizontal: 8,
     alignItems: "center",
