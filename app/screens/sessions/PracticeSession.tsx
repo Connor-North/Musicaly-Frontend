@@ -70,6 +70,7 @@ export default function PracticeSession() {
               </Button>
             </Card>
           </Modal>
+          <Text>&nbsp;</Text>
           <Input
             multiline={true}
             textStyle={styles.inputTextStyle}
@@ -77,19 +78,34 @@ export default function PracticeSession() {
             {...multilineInputState}
             value={note}
             onChangeText={(value) => setNote(value)}
-            style={{ width: "80%" }}
           />
-          <Button onPress={() => router.navigate("/(protected)/new-session")}>
-            Next piece
-          </Button>
+          <Text>&nbsp;</Text>
+
+          <Text>&nbsp;</Text>
           {note.length > 10 ? (
-            <Button status="danger" onPress={handleSave}>
-              End Session
-            </Button>
+            <>
+              <Button
+                onPress={() => router.navigate("/(protected)/new-session")}
+                style={styles.screenButton}
+              >
+                Next Piece
+              </Button>
+              <Text>&nbsp;</Text>
+              <Button
+                status="danger"
+                onPress={handleSave}
+                style={styles.screenButton}
+              >
+                End Session
+              </Button>
+            </>
           ) : (
-            <Button status="warning">
-              Remember to add a note before moving on
-            </Button>
+            <Card style={{ width: 270 }}>
+              <Text status="primary" category="h6">
+                Remember to add a note before moving on.{"\n"}We learn quicker
+                with short reflections on each piece we practice. 🧠
+              </Text>
+            </Card>
           )}
         </SafeAreaView>
       </ScrollView>
@@ -108,5 +124,10 @@ const styles = StyleSheet.create({
   },
   inputTextStyle: {
     minHeight: 100,
+    width: 240,
+    padding: 0,
+  },
+  screenButton: {
+    width: 240,
   },
 });
