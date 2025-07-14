@@ -23,21 +23,11 @@ export default function PracticeSession() {
   const unitId = Array.isArray(id) ? id[0] : id;
   const unitTitle = Array.isArray(title) ? title[0] : title;
   const unitComposer = Array.isArray(composer) ? composer[0] : composer;
-  const [isSaved, setIsSaved] = useState<boolean>(false);
   const [note, setNote] = useState<string>("");
   const [visible, setVisible] = useState(false);
   const router = useRouter();
 
-  const handleSave = () => {
-    if (note.length < 2) {
-      setVisible(true);
-      return;
-    }
-    setIsSaved(true);
-    setTimeout(() => {
-      setIsSaved(false);
-    }, 3000);
-  };
+  const handleSave = () => {};
 
   const useInputState = (initialValue = ""): InputProps => {
     const [value, setValue] = useState(initialValue);
@@ -80,7 +70,6 @@ export default function PracticeSession() {
               </Button>
             </Card>
           </Modal>
-          {isSaved ? <Text>"Note Saved"</Text> : <Text>&nbsp;</Text>}
           <Input
             multiline={true}
             textStyle={styles.inputTextStyle}
@@ -93,9 +82,15 @@ export default function PracticeSession() {
           <Button onPress={() => router.navigate("/(protected)/new-session")}>
             Next piece
           </Button>
-          <Button status="danger" onPress={handleSave}>
-            End Session
-          </Button>
+          {note.length > 10 ? (
+            <Button status="danger" onPress={handleSave}>
+              End Session
+            </Button>
+          ) : (
+            <Button status="warning">
+              Remember to add a note before moving on
+            </Button>
+          )}
         </SafeAreaView>
       </ScrollView>
     </>
