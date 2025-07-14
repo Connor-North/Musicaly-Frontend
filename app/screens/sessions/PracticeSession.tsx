@@ -9,7 +9,7 @@ import {
 import { useState, useContext } from "react";
 import { StyleSheet, Modal, ScrollView } from "react-native";
 import PSU from "./PSU";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SessionTimeContext } from "@/assets/contexts/sessionTime";
 
@@ -26,6 +26,7 @@ export default function PracticeSession() {
   const [isSaved, setIsSaved] = useState<boolean>(false);
   const [note, setNote] = useState<string>("");
   const [visible, setVisible] = useState(false);
+  const router = useRouter();
 
   const handleSave = () => {
     if (note.length < 2) {
@@ -89,7 +90,9 @@ export default function PracticeSession() {
             onChangeText={(value) => setNote(value)}
             style={{ width: "80%" }}
           />
-          <Button>Next piece</Button>
+          <Button onPress={() => router.navigate("/(protected)/new-session")}>
+            Next piece
+          </Button>
           <Button status="danger" onPress={handleSave}>
             End Session
           </Button>
