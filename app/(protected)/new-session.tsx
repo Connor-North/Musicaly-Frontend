@@ -6,6 +6,7 @@ import UnitList from "@/components/units/UnitList";
 import { useRouter } from "expo-router";
 import { supabase } from "@/supabase/auth-helper";
 import { SessionTimeContext } from "@/assets/contexts/sessionTime";
+import { Audio } from "expo-av";
 
 export default function NewSession() {
   const context = useContext(SessionTimeContext);
@@ -19,6 +20,46 @@ export default function NewSession() {
   const [title, setTitle] = React.useState("");
   const [artist, setArtist] = React.useState("");
   const [remountKey, setRemountKey] = React.useState<number>(0);
+
+  const [quizVisible, setQuizVisible] = React.useState(false);
+  const [quizStep, setQuizStep] = React.useState(0);
+  const [selectedAnswer, setSelectedAnswer] = React.useState<string | null>(
+    null
+  );
+
+  const quizQuestions = [
+    {
+      file: require("../../assets/sounds/F.mp3"),
+      options: ["F4 ✅", "C4", "E4", "G4"],
+    },
+    {
+      file: require("../../assets/sounds/D.mp3"),
+      options: ["C4", "D4 ✅", "G4", "F4"],
+    },
+    {
+      file: require("../../assets/sounds/G.mp3"),
+      options: ["G4 ✅", "D4", "F4", "C4"],
+    },
+    {
+      file: require("../../assets/sounds/E.mp3"),
+      options: ["F4", "E4 ✅", "D4", "C4"],
+    },
+    {
+      file: require("../../assets/sounds/C.mp3"),
+      options: ["C4 ✅", "D4", "E4", "F4"],
+    },
+  ];
+
+  async function playNote(file: any) {
+    const { sound } = await Audio.Sound.createAsync(file);
+    await sound.playAsync();
+  }
+
+  function closeQuiz() {
+    setQuizVisible(false);
+    setQuizStep(0);
+    setSelectedAnswer(null);
+  }
 
   async function insertUnit() {
     let collection;
@@ -164,6 +205,10 @@ export default function NewSession() {
           Free Practice
         </Button> */}
 
+        <Button style={styles.button} onPress={() => setQuizVisible(true)}>
+          Note Recognition Quiz
+        </Button>
+
         <Modal
           visible={modalVisible}
           animationType="slide"
@@ -215,6 +260,72 @@ export default function NewSession() {
                 >
                   Let's practice!
                 </Button>
+              )}
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          visible={quizVisible}
+          animationType="slide"
+          presentationStyle="pageSheet"
+          onRequestClose={closeQuiz}
+        >
+          <View style={styles.mainView}>
+            <View style={styles.view} className="p-12 rounded-lg bg-white">
+              <Text category="h4">Question {quizStep + 1} of 5</Text>
+              <Text>&nbsp;</Text>
+              <Button onPress={() => playNote(quizQuestions[quizStep].file)}>
+                🔊 Play Note
+              </Button>
+              <Text>&nbsp;</Text>
+              {quizQuestions[quizStep].options.map((opt, index) => {
+                const isCorrect = opt.includes("✅");
+                const displayText = opt.replace(" ✅", "");
+                let status = "default";
+
+                if (selectedAnswer) {
+                  if (selectedAnswer === displayText && isCorrect) {
+                    status = "success";
+                  } else if (selectedAnswer === displayText && !isCorrect) {
+                    status = "danger";
+                  } else if (isCorrect) {
+                    status = "success";
+                  }
+                }
+
+                return (
+                  <Button
+                    key={index}
+                    style={{ marginVertical: 4 }}
+                    status={status}
+                    onPress={() => {
+                      if (!selectedAnswer) setSelectedAnswer(displayText);
+                    }}
+                  >
+                    {displayText}
+                  </Button>
+                );
+              })}
+              {selectedAnswer && (
+                <>
+                  <Text>&nbsp;</Text>
+                  <Button
+                    onPress={() => {
+                      if (quizStep < quizQuestions.length - 1) {
+                        setQuizStep(quizStep + 1);
+                        setSelectedAnswer(null);
+                      } else {
+                        closeQuiz();
+                        setSelectedAnswer(null);
+                      }
+                    }}
+                  >
+                    {quizStep === quizQuestions.length - 1
+                      ? "Finish"
+                      : "Next ➡️"}
+                  </Button>
+                </>
               )}
             </View>
           </View>
