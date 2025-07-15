@@ -14,6 +14,9 @@ export default function NewSession() {
   const [title, setTitle] = React.useState("");
   const [artist, setArtist] = React.useState("");
   const [remountKey, setRemountKey] = React.useState<number>(0);
+  const [practiceSessionId, setPracticeSessionId] = React.useState<
+    string | null
+  >(null);
 
   async function insertUnit() {
     let collection;
@@ -78,7 +81,7 @@ export default function NewSession() {
             }),
           },
         ])
-        .select("id, student_id");
+        .select("id");
 
       if (error) {
         console.error("Error inserting unit:", error.message);
@@ -87,7 +90,7 @@ export default function NewSession() {
       }
 
       if (data) {
-        console.log("New session inserted:", data[0]);
+        setPracticeSessionId(data[0].id);
         router.push({
           pathname: "/screens/sessions/PracticeSession",
           params: {
@@ -102,6 +105,17 @@ export default function NewSession() {
       console.error("Error inserting unit:", error);
     }
   }
+  const addUnitToSession = (item: any) => {
+    router.push({
+      pathname: "/screens/sessions/PracticeSession",
+      params: {
+        title: item.title,
+        unit_id: item.id,
+        composer: item.composer,
+        practice_session_id: practiceSessionId,
+      },
+    });
+  };
 
   const toggleModal = (): void => {
     setModalVisible(!modalVisible);
@@ -120,7 +134,11 @@ export default function NewSession() {
           remountKey={remountKey}
           buttonText="Start"
           onButtonPress={(item) => {
-            insertNewSession(item);
+            if (practiceSessionId) {
+              addUnitToSession(item);
+            } else {
+              insertNewSession(item);
+            }
           }}
         />
 
@@ -128,7 +146,7 @@ export default function NewSession() {
           Add New Piece
         </Button>
 
-        <Button
+        {/* <Button
           style={styles.button}
           onPress={() => {
             router.push({
@@ -142,7 +160,7 @@ export default function NewSession() {
           }}
         >
           Free Practice
-        </Button>
+        </Button> */}
 
         <Modal
           visible={modalVisible}
