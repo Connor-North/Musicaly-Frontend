@@ -1,35 +1,39 @@
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Platform, StyleSheet, View } from "react-native";
 import Metronome from "../../../components/Metronome";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import { Layout, Button, Text, Card } from "@ui-kitten/components";
 import StopwatchTimer from "react-native-animated-stopwatch-timer";
 import React from "react";
+import { SessionTimeContext } from "@/assets/contexts/sessionTime";
 
 global.__reanimatedWorkletInit = () => {};
 
 interface PSUProps {
-  setSessionTime: React.Dispatch<React.SetStateAction<number>>;
   unitId: string;
   unitComposer: string;
   unitTitle: string;
 }
 
-export default function PSU({
-  setSessionTime,
-  unitId,
-  unitComposer,
-  unitTitle,
-}: PSUProps) {
-  const [isRunning, setIsRunning] = useState<boolean>(false);
+export default function PSU({ unitId, unitComposer, unitTitle }: PSUProps) {
+  const context = useContext(SessionTimeContext);
+  if (!context) {
+    throw new Error("SessionTimeContext must be used within a SessionProvider");
+  }
+  const { unitTime, setUnitTime, sessionTime, setSessionTime } = context;
+
+  const [isRunning, setIsRunning] = useState<boolean>(true);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
 
     if (isRunning) {
+      stopwatchRef.current?.play();
+
       interval = setInterval(() => {
-        setSessionTime((prev) => prev + 1);
-      }, 60000);
+        const snapshotMs = stopwatchRef.current?.getSnapshot?.();
+        const minutes = snapshotMs / 60000;
+        setUnitTime(minutes);
+      }, 1000); // NOTE - every second?? Consider every 5s if performance matters on testing
     }
 
     return () => {
@@ -37,12 +41,7 @@ export default function PSU({
     };
   }, [isRunning]);
 
-  const [unitTime, setUnitTime] = useState<number>(0);
   const stopwatchRef = useRef<any>(null);
-
-  function endUnit() {
-    setSessionTime((prev) => prev + unitTime);
-  }
 
   return (
     <View style={styles.container}>
@@ -52,7 +51,6 @@ export default function PSU({
         <StopwatchTimer
           ref={stopwatchRef}
           containerStyle={styles.stopWatchContainer}
-          animationDuration={0}
           digitStyle={Platform.select({
             ios: {
               width: 32,
@@ -71,20 +69,16 @@ export default function PSU({
         <View style={styles.buttonsContainer}>
           <Button
             onPress={() => {
-              stopwatchRef.current?.play();
-              setIsRunning(true);
+              if (isRunning) {
+                stopwatchRef.current?.pause();
+                setIsRunning(false);
+              } else {
+                stopwatchRef.current?.play();
+                setIsRunning(true);
+              }
             }}
           >
-            ▶
-          </Button>
-          <Button
-            onPress={() => {
-              stopwatchRef.current?.pause();
-              setIsRunning(false);
-              setUnitTime(stopwatchRef.current?.getSnapshot() / 60000);
-            }}
-          >
-            ||
+            {!isRunning ? "▶" : "||"}
           </Button>
         </View>
       </Card>
@@ -108,7 +102,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     width: 240,
     paddingTop: 18,
   },

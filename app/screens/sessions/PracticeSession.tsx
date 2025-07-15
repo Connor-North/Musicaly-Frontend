@@ -1,5 +1,5 @@
 import { Button, Input, InputProps, Text, Card } from "@ui-kitten/components";
-import { useState, useContext } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import { StyleSheet, ScrollView } from "react-native";
 import PSU from "./PSU";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -12,7 +12,7 @@ export default function PracticeSession() {
   if (!context) {
     throw new Error("SessionTimeContext must be used within a SessionProvider");
   }
-  const { sessionTime, setSessionTime } = context;
+  const { setSessionTime, unitTime, setUnitTime } = context;
   const { title, unit_id, composer, practice_session_id } =
     useLocalSearchParams();
   const unitId = Array.isArray(unit_id) ? unit_id[0] : unit_id;
@@ -29,7 +29,16 @@ export default function PracticeSession() {
   const nextSessionPath = "/(protected)/new-session";
   const endSessionPath = "/screens/sessions/EndSession";
 
+  const unitTimeRef = useRef(unitTime);
+
+  useEffect(() => {
+    unitTimeRef.current = unitTime;
+  }, [unitTime]);
+
   async function handleSave(navPath: any) {
+    console.log("unitTime:", unitTime);
+    console.log("unitTimeRef.current:", unitTimeRef.current);
+    const time = Math.floor(unitTimeRef.current);
     try {
       const {
         data: { user },
@@ -42,6 +51,7 @@ export default function PracticeSession() {
             practice_session_id: practiceSessionId,
             unit_comment: note,
             created_at: createdAt,
+            duration: time,
             ended_at: new Date().toLocaleString("en-US", {
               timeZone: "Europe/London",
             }),
@@ -56,6 +66,8 @@ export default function PracticeSession() {
       }
 
       if (data) {
+        setSessionTime((prev) => prev + unitTime);
+        setUnitTime(0);
         router.push(navPath);
       }
     } catch (error) {
@@ -70,62 +82,59 @@ export default function PracticeSession() {
   const multilineInputState = useInputState();
   return (
     <>
-      <ScrollView>
-        <SafeAreaView
-          className="justify-center flex-1 p-4"
-          style={styles.container}
-        >
-          <Text style={{ margin: 20 }} category="h6">
+      <SafeAreaView
+        className="justify-center flex-1 p-4"
+        style={styles.container}
+      >
+        {/* <Text style={{ margin: 20 }} category="h6">
             Total Session Time: {sessionTime} minutes
           </Text>
-          <Text>{practiceSessionId}</Text>
-          <PSU
-            setSessionTime={setSessionTime}
-            unitId={unitId}
-            unitComposer={unitComposer}
-            unitTitle={unitTitle}
-          />
-          <Text>&nbsp;</Text>
-          <Input
-            multiline={true}
-            textStyle={styles.inputTextStyle}
-            placeholder="Add Notes"
-            {...multilineInputState}
-            value={note}
-            onChangeText={(value) => setNote(value)}
-          />
-          <Text>&nbsp;</Text>
+          <Text>{practiceSessionId}</Text> */}
+        <PSU
+          unitId={unitId}
+          unitComposer={unitComposer}
+          unitTitle={unitTitle}
+        />
+        <Text>&nbsp;</Text>
+        <Input
+          multiline={true}
+          textStyle={styles.inputTextStyle}
+          placeholder="Add Notes"
+          {...multilineInputState}
+          value={note}
+          onChangeText={(value) => setNote(value)}
+        />
+        <Text>&nbsp;</Text>
 
-          <Text>&nbsp;</Text>
-          {note.length > 10 || unitTitle === "Free Play" ? (
-            <>
-              <Button
-                onPress={() => handleSave(nextSessionPath)}
-                style={styles.screenButton}
-              >
-                Next Piece
-              </Button>
-              <Text>&nbsp;</Text>
-              <Button
-                status="danger"
-                onPress={() => {
-                  handleSave(endSessionPath);
-                }}
-                style={styles.screenButton}
-              >
-                End Session
-              </Button>
-            </>
-          ) : (
-            <Card style={{ width: 270 }}>
-              <Text status="primary" category="h6">
-                Remember to add a note before moving on.{"\n"}We learn quicker
-                with short reflections on each piece we practice. 🧠
-              </Text>
-            </Card>
-          )}
-        </SafeAreaView>
-      </ScrollView>
+        <Text>&nbsp;</Text>
+        {note.length > 10 || unitTitle === "Free Play" ? (
+          <>
+            <Button
+              onPress={() => handleSave(nextSessionPath)}
+              style={styles.screenButton}
+            >
+              Next Piece
+            </Button>
+            <Text>&nbsp;</Text>
+            <Button
+              status="danger"
+              onPress={() => {
+                handleSave(endSessionPath);
+              }}
+              style={styles.screenButton}
+            >
+              End Session
+            </Button>
+          </>
+        ) : (
+          <Card style={{ width: 270 }}>
+            <Text status="primary" category="h6">
+              Remember to add a note before moving on.{"\n"}We learn quicker
+              with short reflections on each piece we practice. 🧠
+            </Text>
+          </Card>
+        )}
+      </SafeAreaView>
     </>
   );
 }

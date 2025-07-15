@@ -39,7 +39,7 @@ export default function EndScreen() {
         .update([
           {
             notes: note,
-            duration: sessionTime,
+            duration: Math.round(sessionTime),
             rating: rating,
             ended_at: new Date().toLocaleString("en-US", {
               timeZone: "Europe/London",
@@ -68,7 +68,8 @@ export default function EndScreen() {
   return (
     <Layout style={styles.root}>
       <Text category="h4">
-        Good job today! You practiced for {sessionTime} minutes!
+        Good job! You practiced for {Math.round(sessionTime)} minutes in this
+        session!
       </Text>
       <Text>&nbsp;</Text>
       <Text>
