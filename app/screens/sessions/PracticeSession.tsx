@@ -48,7 +48,7 @@ export default function PracticeSession() {
           <Text style={{ margin: 20 }} category="h6">
             Total Session Time: {sessionTime} minutes
           </Text>
-
+          <Text>{practiceSessionId}</Text>
           <PSU
             setSessionTime={setSessionTime}
             unitId={unitId}
