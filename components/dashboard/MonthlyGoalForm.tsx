@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, Text, Input, Button, ProgressBar } from "@ui-kitten/components";
 import { SafeAreaView, FlatList, StyleSheet, View } from "react-native";
+import { supabase } from "@/supabase/auth-helper";
+
+// render goals list from returned data
+// check list initially has 5 empty goals
+// implement logic to add a new goal (onPress ====> INSERT) | add created_at
 
 interface Goal {
   id?: string;
@@ -9,34 +14,21 @@ interface Goal {
   goal_date: string;
   goal_status: number;
   created_at: string;
+  updated_at: string;
 }
 
-const initialGoals: Goal[] = [
-  {
-    id: "dd59c8c7-a8a1-4b65-9db2-5d787ab1dd4d",
-    student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044f",
-    goal_description: "play all 4 grade pieces to 75% tempo",
-    goal_date: "2025-08-21T12:04:28.149551+00:00",
-    goal_status: 2,
-    created_at: "2025-07-05T12:04:29.149551+00:00",
-  },
-  {
-    id: "dd59c8c7-a8a1-4b65-9db2-5d787ab1dd4d",
-    student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044f",
-    goal_description: "play section B invention no. 8 LH only",
-    goal_date: "2025-07-12T12:04:28.149551+00:00",
-    goal_status: 4,
-    created_at: "2025-07-05T12:04:27.149551+00:00",
-  },
-  {
-    id: "dd59c8c7-a8a1-4b65-9db2-5d787ab1dd4d",
-    student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044f",
-    goal_description: "play section B invention no. 8 RH only",
-    goal_date: "2025-07-19T12:04:28.149551+00:00",
-    goal_status: 4,
-    created_at: "2025-07-05T12:04:28.149551+00:00",
-  },
-];
+let initialGoals: Goal[] = [];
+// [
+//   {
+//     id: "dd59c8c7-a8a1-4b65-9db2-5d787ab1dd4d",
+//     student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044f",
+//     goal_description: "play section B invention no. 8 RH only",
+//     goal_date: "2025-07-19T12:04:28.149551+00:00",
+//     goal_status: 4,
+//     created_at: "2025-07-05T12:04:28.149551+00:00",
+//     updated_at: "2025-07-05T12:04:28.149551+00:00",
+//   },
+// ];
 
 export default function MonthlyGoalsForm() {
   // NOTE - do I need to count goal count?
@@ -45,6 +37,34 @@ export default function MonthlyGoalsForm() {
   const [newGoals, setNewGoals] = useState<string[]>(
     Array(5 - data.length).fill("")
   );
+
+  useEffect(() => {
+    async function getGoalsForCurrentUser() {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        const { data, error } = await supabase
+          .from("student_monthly_goals")
+          .select("*")
+          .eq("student_id", user?.id);
+
+        if (error) {
+          console.error("Error fetching units:", error.message);
+          // TODO - Deal with error handling
+          return;
+        }
+
+        if (data) {
+          initialGoals = data;
+          console.log("Units for current user:", data);
+        }
+      } catch (error) {
+        console.error("Error fetching units:", error);
+      }
+    }
+    getGoalsForCurrentUser();
+  }, []);
 
   const handleInputChange = (text: string, index: number) => {
     const updated = [...newGoals];
