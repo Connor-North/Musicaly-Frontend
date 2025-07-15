@@ -19,9 +19,13 @@ export default function PracticeSession() {
     throw new Error("SessionTimeContext must be used within a SessionProvider");
   }
   const { sessionTime, setSessionTime } = context;
-  const { title, id, composer } = useLocalSearchParams();
-  const unitId = Array.isArray(id) ? id[0] : id;
+  const { title, unit_id, composer, practice_session_id } =
+    useLocalSearchParams();
+  const unitId = Array.isArray(unit_id) ? unit_id[0] : unit_id;
   const unitTitle = Array.isArray(title) ? title[0] : title;
+  const practiceSessionId = Array.isArray(practice_session_id)
+    ? practice_session_id[0]
+    : practice_session_id;
   const unitComposer = Array.isArray(composer) ? composer[0] : composer;
   const [note, setNote] = useState<string>("");
   const [visible, setVisible] = useState(false);
