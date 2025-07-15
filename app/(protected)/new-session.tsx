@@ -95,13 +95,7 @@ export default function NewSession() {
 
       if (data) {
         console.log("New unit inserted:", data[0]);
-        router.push({
-          pathname: "/screens/sessions/PracticeSession",
-          params: {
-            title: title,
-            composer: artist,
-          },
-        });
+        insertNewSession(data);
       }
     } catch (error) {
       console.error("Error inserting unit:", error);
@@ -110,6 +104,19 @@ export default function NewSession() {
 
   // Start here -----------------V
   async function insertNewSession(item: any) {
+    if (practiceSessionId) {
+      router.push({
+        pathname: "/screens/sessions/PracticeSession",
+        params: {
+          title: item.title,
+          unit_id: item.id,
+          composer: item.composer,
+          practice_session_id: practiceSessionId,
+        },
+      });
+      return;
+    }
+
     try {
       const {
         data: { user },
@@ -148,17 +155,6 @@ export default function NewSession() {
       console.error("Error inserting unit:", error);
     }
   }
-  const addUnitToSession = (item: any) => {
-    router.push({
-      pathname: "/screens/sessions/PracticeSession",
-      params: {
-        title: item.title,
-        unit_id: item.id,
-        composer: item.composer,
-        practice_session_id: practiceSessionId,
-      },
-    });
-  };
 
   const toggleModal = (): void => {
     setModalVisible(!modalVisible);
@@ -177,11 +173,7 @@ export default function NewSession() {
           remountKey={remountKey}
           buttonText="Start"
           onButtonPress={(item) => {
-            if (practiceSessionId) {
-              addUnitToSession(item);
-            } else {
-              insertNewSession(item);
-            }
+            insertNewSession(item);
           }}
         />
 
