@@ -1,24 +1,18 @@
-import {
-  Layout,
-  Button,
-  Input,
-  InputProps,
-  Text,
-  Card,
-} from "@ui-kitten/components";
+import { Button, Input, InputProps, Text, Card } from "@ui-kitten/components";
 import { useState, useContext } from "react";
-import { StyleSheet, Modal, ScrollView } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import PSU from "./PSU";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SessionTimeContext } from "@/assets/contexts/sessionTime";
+import { supabase } from "@/supabase/auth-helper";
 
 export default function PracticeSession() {
   const context = useContext(SessionTimeContext);
   if (!context) {
     throw new Error("SessionTimeContext must be used within a SessionProvider");
   }
-  const { sessionTime, setSessionTime } = context;
+  const { sessionTime, setSessionTime, setPracticeSessionId } = context;
   const { title, unit_id, composer, practice_session_id } =
     useLocalSearchParams();
   const unitId = Array.isArray(unit_id) ? unit_id[0] : unit_id;
@@ -28,10 +22,48 @@ export default function PracticeSession() {
     : practice_session_id;
   const unitComposer = Array.isArray(composer) ? composer[0] : composer;
   const [note, setNote] = useState<string>("");
-  const [visible, setVisible] = useState(false);
   const router = useRouter();
+  const createdAt = new Date().toLocaleString("en-US", {
+    timeZone: "Europe/London",
+  });
+  const nextSessionPath = "/(protected)/new-session";
+  const endSessionPath = "/screens/sessions/EndSession";
 
-  const handleSave = () => {};
+  async function handleSave(navPath: any) {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("practice_sessions_units")
+        .insert([
+          {
+            unit_id: unitId,
+            practice_session_id: practiceSessionId,
+            unit_comment: note,
+            created_at: createdAt,
+            ended_at: new Date().toLocaleString("en-US", {
+              timeZone: "Europe/London",
+            }),
+          },
+        ])
+        .select("*");
+
+      if (error) {
+        console.error("Error inserting unit:", error.message);
+        // TODO - deal with error handling
+        return;
+      }
+
+      if (data) {
+        console.log("New unit inserted:", data[0]);
+        console.log("Navigating to:", navPath);
+        router.push(navPath);
+      }
+    } catch (error) {
+      console.error("Error inserting unit:", error);
+    }
+  }
 
   const useInputState = (initialValue = ""): InputProps => {
     const [value, setValue] = useState(initialValue);
@@ -70,7 +102,7 @@ export default function PracticeSession() {
           {note.length > 10 || unitTitle === "Free Play" ? (
             <>
               <Button
-                onPress={() => router.navigate("/(protected)/new-session")}
+                onPress={() => handleSave(nextSessionPath)}
                 style={styles.screenButton}
               >
                 Next Piece
@@ -78,7 +110,10 @@ export default function PracticeSession() {
               <Text>&nbsp;</Text>
               <Button
                 status="danger"
-                onPress={() => router.navigate("/screens/sessions/EndSession")}
+                onPress={() => {
+                  handleSave(endSessionPath);
+                  setPracticeSessionId(null);
+                }}
                 style={styles.screenButton}
               >
                 End Session
