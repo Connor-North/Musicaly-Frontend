@@ -1,22 +1,24 @@
-import { View, StyleSheet, Modal, ScrollView, Pressable } from "react-native";
+import { View, StyleSheet, Modal, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Text, Input, Radio, RadioGroup } from "@ui-kitten/components";
-import React from "react";
-import UnitCard from "@/components/unit-card";
+import React, { useEffect, useContext } from "react";
 import UnitList from "@/components/units/UnitList";
 import { useRouter } from "expo-router";
 import { supabase } from "@/supabase/auth-helper";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { SessionTimeContext } from "@/assets/contexts/sessionTime";
 
 export default function NewSession() {
+  const context = useContext(SessionTimeContext);
+  if (!context) {
+    throw new Error("SessionTimeContext must be used within a SessionProvider");
+  }
+  const { practiceSessionId, setPracticeSessionId } = context;
+
   const router = useRouter();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [artist, setArtist] = React.useState("");
   const [remountKey, setRemountKey] = React.useState<number>(0);
-  const [practiceSessionId, setPracticeSessionId] = React.useState<
-    string | null
-  >(null);
 
   async function insertUnit() {
     let collection;
