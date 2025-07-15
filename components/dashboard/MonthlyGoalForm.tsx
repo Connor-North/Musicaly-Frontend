@@ -89,35 +89,74 @@ export default function MonthlyGoalsForm() {
   };
 
   // Handler for adding a new goal
-  const addGoal = (index: number) => {
+  async function addGoal(index: number) {
     const goalText: string = newGoals[index].trim();
     if (goalText.length < 5) {
       alert("Please write at least 5 characters");
       return;
     }
 
-    const newGoal: Goal = {
-      id: Math.random().toString(),
-      student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044z", // FIXME - replace with actual value, extract from data, or from session object of Supabase session?
-      goal_description: goalText,
-      goal_date: new Date().toISOString(), //FIXME - Is this valid date format for Supabase TimeStampZ - check vs reference object
-      goal_status: 0, // Set at 0, as new goal will be unstarted...?
-      created_at: new Date().toISOString(), //FIXME - Is this valid date format for Supabase TimeStampZ
-    };
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("student_monthly_goals")
+        .insert([
+          {
+            student_id: user?.id,
+            goal_description: goalText,
+            goal_status: 0,
+            goal_date: null,
+            created_at: new Date().toLocaleString("en-US", {
+              timeZone: "Europe/London",
+            }),
+          },
+        ])
+        .select("*");
 
-    setData((currentData) => {
-      const updatedData = [...currentData, newGoal];
-      return updatedData;
-    });
+      if (error) {
+        console.error("Error inserting goal:", error.message);
 
-    setNewGoals((currentGoals) => {
-      const updatedNewGoals = [...currentGoals];
-      updatedNewGoals.splice(index, 1);
-      return updatedNewGoals;
-    });
+        return;
+      }
 
-    //NOTE - Consider - handle logic here for updating on Supabase? Or render all locally and handle elsewhere?
-  };
+      if (data) {
+        console.log("New goal inserted:", data[0]);
+        const newGoal = data[0];
+        setData((currentData) => {
+          const updatedData = [...currentData, newGoal];
+          return updatedData;
+        });
+
+        setNewGoals((currentGoals) => {
+          const updatedNewGoals = [...currentGoals];
+          updatedNewGoals.splice(index, 1);
+          return updatedNewGoals;
+        });
+      }
+    } catch (error) {
+      console.error("Error inserting goal:", error);
+    }
+  }
+
+  // const newGoal: Goal = {
+  //   id: Math.random().toString(),
+  //   student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044z", // FIXME - replace with actual value, extract from data, or from session object of Supabase session?
+  //   goal_description: goalText,
+  //   goal_date: new Date().toLocaleString("en-US", {
+  //     timeZone: "Europe/London",
+  //   }),
+  //   goal_status: 0,
+  //   created_at: new Date().toLocaleString("en-US", {
+  //     timeZone: "Europe/London",
+  //   }),
+  //   updated_at: new Date().toLocaleString("en-US", {
+  //     timeZone: "Europe/London",
+  //   }),
+  // };
+
+  //NOTE - Consider - handle logic here for updating on Supabase? Or render all locally and handle elsewhere?
 
   return (
     <SafeAreaView style={styles.container}>
