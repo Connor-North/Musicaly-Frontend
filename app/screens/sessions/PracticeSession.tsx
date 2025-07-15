@@ -63,7 +63,7 @@ export default function PracticeSession() {
           <Text>&nbsp;</Text>
 
           <Text>&nbsp;</Text>
-          {note.length > 10 ? (
+          {note.length > 10 || unitTitle === "Free Play" ? (
             <>
               <Button
                 onPress={() => router.navigate("/(protected)/new-session")}
@@ -74,7 +74,7 @@ export default function PracticeSession() {
               <Text>&nbsp;</Text>
               <Button
                 status="danger"
-                onPress={handleSave}
+                onPress={() => router.navigate("/screens/sessions/EndSession")}
                 style={styles.screenButton}
               >
                 End Session

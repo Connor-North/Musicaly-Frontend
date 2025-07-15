@@ -1,9 +1,9 @@
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StyleSheet, Modal, View, Text, TextInput } from 'react-native';
-import UnitList from '@/components/units/UnitList';
-import React from 'react';
-import UnitCard from '@/components/unit-card';
-import { Input } from '@ui-kitten/components';
+import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, Modal, View, Text, TextInput } from "react-native";
+import UnitList from "@/components/units/UnitList";
+import React from "react";
+import UnitCard from "@/components/unit-card";
+import { Input } from "@ui-kitten/components";
 
 export default function Library() {
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -11,15 +11,25 @@ export default function Library() {
   const toggleModal = (): void => {
     setModalVisible(!modalVisible);
   };
-  const [note, setNote] = React.useState<string>('');
+  const [note, setNote] = React.useState<string>("");
+
+  const [remountKey, setRemountKey] = React.useState<number>(0);
+
+  function triggerRemount() {
+    setRemountKey((prev) => prev + 1);
+  }
 
   return (
     <SafeAreaView
       className="justify-center flex-1 p-4"
       style={styles.container}
     >
-      <UnitList buttonText="Edit" onButtonPress={toggleModal} />
-      return(
+      <UnitList
+        remountKey={remountKey}
+        buttonText="Edit"
+        onButtonPress={toggleModal}
+      />
+
       <Modal
         visible={modalVisible}
         animationType="slide"
@@ -44,24 +54,23 @@ export default function Library() {
               placeholder="Add Notes"
               value={note}
               onChangeText={(value) => setNote(value)}
-              style={{ width: '80%' }}
+              style={{ width: "80%" }}
             />
           </View>
         </View>
       </Modal>
-      )
     </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ffffff",
   },
   mainView: {
-    justifyContent: 'center',
+    justifyContent: "center",
     flex: 1,
   },
   input: {

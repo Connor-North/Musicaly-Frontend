@@ -8,7 +8,8 @@ import CustomHeader from "@/components/CustomHeader";
 export default function RootLayout() {
   return (
     <React.Fragment>
-      <Tabs screenOptions={{ header: () => <CustomHeader /> }}>
+      <Tabs>
+        {/* <Tabs screenOptions={{ header: () => <CustomHeader /> }}> */}
         <Tabs.Screen
           name="index"
           options={{
