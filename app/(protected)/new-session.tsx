@@ -94,7 +94,6 @@ export default function NewSession() {
       }
 
       if (data) {
-        console.log("New unit inserted:", data[0]);
         insertNewSession(data);
       }
     } catch (error) {

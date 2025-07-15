@@ -38,7 +38,6 @@ export default function PSU({
   }, [isRunning]);
 
   const [unitTime, setUnitTime] = useState<number>(0);
-  console.log(unitTime);
   const stopwatchRef = useRef<any>(null);
 
   function endUnit() {
@@ -87,9 +86,6 @@ export default function PSU({
           >
             ||
           </Button>
-          {/* <Button onPress={endUnit}>⬜</Button> */}
-
-          {/* TODO -  On unit end, take props and update. Maybe get rid of the extra useState in here?*/}
         </View>
       </Card>
       <Metronome tempo={80} />

@@ -4,6 +4,7 @@ import { Text, Layout, Input, InputProps, Button } from "@ui-kitten/components";
 import { SessionTimeContext } from "@/assets/contexts/sessionTime";
 import { useRouter } from "expo-router";
 import Slider from "@react-native-community/slider";
+import { supabase } from "@/supabase/auth-helper";
 
 export default function EndScreen() {
   const router = useRouter();
@@ -12,15 +13,57 @@ export default function EndScreen() {
   if (!context) {
     throw new Error("SessionTimeContext must be used within a SessionProvider");
   }
-  const { sessionTime, setSessionTime } = context;
+  const {
+    sessionTime,
+    setSessionTime,
+    setPracticeSessionId,
+    practiceSessionId,
+  } = context;
 
   const [note, setNote] = useState<string>("");
+  const [rating, setRating] = useState<number>(0);
 
   const useInputState = (initialValue = ""): InputProps => {
     const [value, setValue] = useState(initialValue);
     return { value, onChangeText: setValue };
   };
   const multilineInputState = useInputState();
+
+  async function handleEndSession() {
+    try {
+      // const {
+      //   data: { user },
+      // } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("practice_sessions")
+        .update([
+          {
+            notes: note,
+            duration: sessionTime,
+            rating: rating,
+            ended_at: new Date().toLocaleString("en-US", {
+              timeZone: "Europe/London",
+            }),
+          },
+        ])
+        .eq("id", practiceSessionId)
+        .select("*");
+
+      if (error) {
+        console.error("Error inserting unit:", error.message);
+        // TODO - deal with error handling
+        return;
+      }
+
+      if (data) {
+        setSessionTime(0);
+        setPracticeSessionId(null);
+        router.push("/(protected)");
+      }
+    } catch (error) {
+      console.error("Error inserting unit:", error);
+    }
+  }
 
   return (
     <Layout style={styles.root}>
@@ -60,13 +103,16 @@ export default function EndScreen() {
           minimumTrackTintColor={"#A6C1FF"}
           step={1}
           renderStepNumber
+          onValueChange={(value) => {
+            setRating(value);
+          }}
         />
 
         <Button
           style={{ marginTop: 50 }}
           status="primary"
           onPress={() => {
-            router.navigate("/(protected)");
+            handleEndSession();
           }}
         >
           End Session

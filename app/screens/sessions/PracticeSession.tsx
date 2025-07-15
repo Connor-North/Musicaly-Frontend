@@ -12,7 +12,7 @@ export default function PracticeSession() {
   if (!context) {
     throw new Error("SessionTimeContext must be used within a SessionProvider");
   }
-  const { sessionTime, setSessionTime, setPracticeSessionId } = context;
+  const { sessionTime, setSessionTime } = context;
   const { title, unit_id, composer, practice_session_id } =
     useLocalSearchParams();
   const unitId = Array.isArray(unit_id) ? unit_id[0] : unit_id;
@@ -56,8 +56,6 @@ export default function PracticeSession() {
       }
 
       if (data) {
-        console.log("New unit inserted:", data[0]);
-        console.log("Navigating to:", navPath);
         router.push(navPath);
       }
     } catch (error) {
@@ -112,7 +110,6 @@ export default function PracticeSession() {
                 status="danger"
                 onPress={() => {
                   handleSave(endSessionPath);
-                  setPracticeSessionId(null);
                 }}
                 style={styles.screenButton}
               >
