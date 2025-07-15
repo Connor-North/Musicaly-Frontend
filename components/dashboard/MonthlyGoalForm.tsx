@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { Card, Text, Input, Button, ProgressBar } from "@ui-kitten/components";
-import {
-  SafeAreaView,
-  FlatList,
-  StyleSheet,
-  View,
-  Pressable,
-} from "react-native";
+import { SafeAreaView, FlatList, StyleSheet, View } from "react-native";
 
 interface Goal {
   id?: string;
@@ -58,6 +52,22 @@ export default function MonthlyGoalsForm() {
     setNewGoals(updated);
   };
 
+  //Handler for adding progress
+  const updateProgress = (index: number, amount: number) => {
+    setData((currentData) => {
+      const updated = [...currentData];
+      const goal = { ...updated[index] };
+      goal.goal_status = goal.goal_status + amount;
+      if (goal.goal_status > 5) {
+        goal.goal_status = 5;
+      } else if (goal.goal_status < 0) {
+        goal.goal_status = 0;
+      }
+      updated[index] = goal;
+      return updated;
+    });
+  };
+
   // Handler for adding a new goal
   const addGoal = (index: number) => {
     const goalText: string = newGoals[index].trim();
@@ -94,14 +104,35 @@ export default function MonthlyGoalsForm() {
       <Card style={styles.card}>
         <FlatList
           data={data}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <>
-              <Text style={styles.item}>{item.goal_description}</Text>
-              <View>
-                <ProgressBar
-                  animating={false}
-                  progress={item.goal_status / 5}
-                />
+              <View style={{ paddingVertical: 15 }}>
+                <Text style={styles.item}>{item.goal_description}</Text>
+                <View style={styles.progressRow}>
+                  <Button size="tiny" onPress={() => updateProgress(index, -1)}>
+                    -
+                  </Button>
+                  <ProgressBar
+                    style={styles.progressBar}
+                    animating={false}
+                    progress={item.goal_status / 5}
+                  />
+
+                  <Button size="tiny" onPress={() => updateProgress(index, 1)}>
+                    +
+                  </Button>
+                </View>
+                {item.goal_status === 5 ? (
+                  <View style={styles.successContainer}>
+                    <Text style={styles.success} status="success">
+                      You have reached your goal! 🎉
+                    </Text>
+                  </View>
+                ) : (
+                  <View style={styles.successContainer}>
+                    <Text style={styles.success} status="success"></Text>
+                  </View>
+                )}
               </View>
             </>
           )}
@@ -150,12 +181,19 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
     fontWeight: "bold",
-    textDecorationLine: "underline",
+
     marginBottom: 20,
   },
   item: {
     fontSize: 18,
     paddingVertical: 8,
+  },
+  success: {
+    fontSize: 10,
+    paddingVertical: 1,
+  },
+  successContainer: {
+    alignItems: "center",
   },
   inputContainer: {
     flexDirection: "row",
@@ -170,5 +208,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     height: 40,
     marginRight: 10,
+  },
+  progressBar: {
+    flex: 1,
+    height: 5,
+  },
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
   },
 });
