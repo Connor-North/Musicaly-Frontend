@@ -3,6 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import { Audio } from "expo-av";
 import { Button } from "@ui-kitten/components";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 
 type SingleRecording = {
   sound: Audio.Sound;
@@ -10,12 +11,30 @@ type SingleRecording = {
   file: String | null;
 };
 export default function Recording() {
+  const [isRecording, setIsRecording] = useState<boolean>(false);
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [recordings, setRecordings] = useState<SingleRecording[]>([]);
   const [permissionResponse, requestPermission] = Audio.usePermissions();
   const [message, setMessage] = useState("");
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [stopTime, setStopTime] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (startTime !== null) {
+      console.log("startTime updated:", startTime);
+    }
+  }, [startTime]);
+
+  useEffect(() => {
+    if (stopTime !== null) {
+      console.log("stopTime updated:", stopTime);
+    }
+  }, [stopTime]);
 
   async function startRecording() {
+    setIsRecording(true);
+    const now = Date.now();
+    setStartTime(now);
     try {
       if (!permissionResponse || permissionResponse.status !== "granted") {
         console.log("Requesting permission..");
@@ -26,46 +45,62 @@ export default function Recording() {
         playsInSilentModeIOS: true,
       });
 
-      console.log("Starting recording..");
       const { recording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
+
       setRecording(recording);
-      console.log("Recording started");
     } catch (err) {
+      setStartTime(null);
+      // TODO - deal with error states
       console.error("Failed to start recording", err);
     }
   }
 
   async function stopRecording() {
+    setIsRecording(false);
     console.log("Stopping recording..");
-    if (!recording) return;
-    setRecording(null);
-    await recording.stopAndUnloadAsync();
-    await Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-    });
-    let updatedRecordings = [...recordings];
-    const { sound, status } = await recording.createNewLoadedSoundAsync();
-    if (!status.isLoaded || typeof status.durationMillis !== "number") {
-      setRecording(null);
+    if (!recording) {
       return;
     }
-    updatedRecordings.push({
-      sound: sound,
-      duration: getDurationFormatted(status.durationMillis),
-      file: recording.getURI(),
-    });
-    setRecordings(updatedRecordings);
+    try {
+      await recording.stopAndUnloadAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+      });
+
+      const now = Date.now();
+      setStopTime(now);
+      let updatedRecordings = [...recordings];
+      const { sound, status } = await recording.createNewLoadedSoundAsync();
+      if (!status.isLoaded) {
+        setRecording(null);
+        return;
+      }
+
+      const durationMillis = startTime ? now - startTime : 0;
+
+      updatedRecordings.push({
+        sound: sound,
+        duration: getDurationFormatted(durationMillis),
+        file: recording.getURI(),
+      });
+      setRecordings(updatedRecordings);
+    } catch (err) {
+      setRecording(null);
+      setStopTime(null);
+      // TODO - deal with error states
+      console.log("error in stop recording", err);
+    }
   }
-  function getDurationFormatted(millis: number) {
-    if (!millis || isNaN(millis)) return "0: 00";
-    const minutes = millis / 1000 / 60;
-    const minutesDisplay = Math.floor(minutes);
-    const seconds = Math.round((minutes - minutesDisplay) * 60);
-    const secondsDisplay = seconds < 10 ? `0${seconds}` : seconds;
-    return `${minutesDisplay} : ${secondsDisplay}`;
+
+  function getDurationFormatted(ms: number) {
+    const seconds = Math.trunc(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const totalSeconds = seconds % 60;
+    return `${minutes}:${totalSeconds.toString().padStart(2, "0")}`;
   }
+
   function getRecordingLines() {
     return recordings.map((recordingLine, index) => {
       return (
@@ -82,8 +117,8 @@ export default function Recording() {
   }
   return (
     <View style={styles.container}>
-      <Button onPress={recording ? stopRecording : startRecording}>
-        {recording ? "⬛" : "🔴"}
+      <Button onPress={isRecording ? stopRecording : startRecording}>
+        {isRecording ? "⬛" : "🔴"}
       </Button>
       {getRecordingLines()}
       <StatusBar style="auto" />
