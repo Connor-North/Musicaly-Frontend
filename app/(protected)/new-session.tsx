@@ -62,6 +62,47 @@ export default function NewSession() {
     }
   }
 
+  // Start here -----------------V
+  async function insertNewSession(item: any) {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("practice_sessions")
+        .insert([
+          {
+            student_id: user?.id,
+            created_at: new Date().toLocaleString("en-US", {
+              timeZone: "Europe/London",
+            }),
+          },
+        ])
+        .select("id, student_id");
+
+      if (error) {
+        console.error("Error inserting unit:", error.message);
+        // TODO: Error handling here
+        return;
+      }
+
+      if (data) {
+        console.log("New session inserted:", data[0]);
+        router.push({
+          pathname: "/screens/sessions/PracticeSession",
+          params: {
+            title: item.title,
+            unit_id: item.id,
+            composer: item.composer,
+            practice_session_id: data[0].id,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error inserting unit:", error);
+    }
+  }
+
   const toggleModal = (): void => {
     setModalVisible(!modalVisible);
   };
@@ -79,14 +120,7 @@ export default function NewSession() {
           remountKey={remountKey}
           buttonText="Start"
           onButtonPress={(item) => {
-            router.push({
-              pathname: "/screens/sessions/PracticeSession",
-              params: {
-                title: item.title,
-                id: item.id,
-                composer: item.composer,
-              },
-            });
+            insertNewSession(item);
           }}
         />
 
