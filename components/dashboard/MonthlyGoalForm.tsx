@@ -73,7 +73,7 @@ export default function MonthlyGoalsForm() {
   };
 
   //Handler for adding progress
-  const updateProgress = (index: number, amount: number) => {
+  async function updateProgress(index: number, amount: number) {
     setData((currentData) => {
       const updated = [...currentData];
       const goal = { ...updated[index] };
@@ -86,7 +86,7 @@ export default function MonthlyGoalsForm() {
       updated[index] = goal;
       return updated;
     });
-  };
+  }
 
   // Handler for adding a new goal
   async function addGoal(index: number) {
