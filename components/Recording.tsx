@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, StyleSheet, Text, Dimensions, ScrollView } from "react-native";
+import { View, StyleSheet, Text, ScrollView } from "react-native";
 import { Audio } from "expo-av";
 import { Button } from "@ui-kitten/components";
 import { StatusBar } from "expo-status-bar";
@@ -20,8 +20,7 @@ export default function Recording() {
   const [message, setMessage] = useState("");
   const [startTime, setStartTime] = useState<number | null>(null);
   const [stopTime, setStopTime] = useState<number | null>(null);
-  // const screenWidth = Dimensions.get("window").width;
-  // const screenHeight = Dimensions.get("window").height;
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   useEffect(() => {
     if (startTime !== null) {
@@ -106,7 +105,7 @@ export default function Recording() {
     const totalSeconds = seconds % 60;
     return `${minutes}:${totalSeconds.toString().padStart(2, "0")}`;
   }
-
+  //  async function
   function getRecordingLines() {
     return recordings.map((recordingLine, index) => {
       return (
@@ -123,7 +122,9 @@ export default function Recording() {
             </Button>
             <View style={{ padding: 5 }}>
               <Button
-                onPress={clearRecording}
+                onPress={() => {
+                  clearRecording(index);
+                }}
                 accessoryLeft={() => (
                   <AntDesign name="delete" size={24} color="black" />
                 )}
@@ -134,15 +135,18 @@ export default function Recording() {
       );
     });
   }
-  function clearRecording() {
-    setRecording(null);
+  function clearRecording(index) {
+    setRecordings((currentRecordings) => {
+      const updated = [...currentRecordings];
+      updated.splice(index, 1);
+      return updated;
+    });
   }
   function clearRecordings() {
     setRecordings([]);
   }
   return (
     <View style={styles.container}>
-      {/* <View style={[{ height: screenHeight * 0.4, width: screenWidth * 0.9 }]}> */}
       <Button
         style={styles.buttonOne}
         onPress={isRecording ? stopRecording : startRecording}
@@ -160,12 +164,6 @@ export default function Recording() {
         {getRecordingLines()}
         <StatusBar style="auto" />
       </ScrollView>
-      {/* <Button
-          accessoryLeft={() => (
-            <AntDesign name="delete" size={24} color="black" />
-          )}
-        ></Button> */}
-
       {recordings.length > 0 && (
         <Button
           style={styles.buttonTwo}
