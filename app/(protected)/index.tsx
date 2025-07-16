@@ -5,18 +5,9 @@ import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
-  const [disableSignOutButton, setDisableSignOutButton] = useState(false);
-
-  async function signOut() {
-    setDisableSignOutButton(true);
-    await handleSignOut();
-    setDisableSignOutButton(false);
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <WeeklyChart />
-      <Button title={"Sign Out"} onPress={signOut} />
     </SafeAreaView>
   );
 }

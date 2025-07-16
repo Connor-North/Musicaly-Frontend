@@ -1,15 +1,20 @@
-import { View, StyleSheet, Modal, ScrollView, Pressable } from "react-native";
+import { View, StyleSheet, Modal, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Text, Input, Radio, RadioGroup } from "@ui-kitten/components";
-import React from "react";
-import UnitCard from "@/components/unit-card";
+import React, { useEffect, useContext } from "react";
 import UnitList from "@/components/units/UnitList";
 import { useRouter } from "expo-router";
 import { supabase } from "@/supabase/auth-helper";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { SessionTimeContext } from "@/assets/contexts/sessionTime";
 import { Audio } from "expo-av";
 
 export default function NewSession() {
+  const context = useContext(SessionTimeContext);
+  if (!context) {
+    throw new Error("SessionTimeContext must be used within a SessionProvider");
+  }
+  const { practiceSessionId, setPracticeSessionId } = context;
+
   const router = useRouter();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [title, setTitle] = React.useState("");
@@ -89,12 +94,59 @@ export default function NewSession() {
       }
 
       if (data) {
-        console.log("New unit inserted:", data[0]);
+        insertNewSession(data);
+      }
+    } catch (error) {
+      console.error("Error inserting unit:", error);
+    }
+  }
+
+  // Start here -----------------V
+  async function insertNewSession(item: any) {
+    if (practiceSessionId) {
+      router.push({
+        pathname: "/screens/sessions/PracticeSession",
+        params: {
+          title: item.title,
+          unit_id: item.id,
+          composer: item.composer,
+          practice_session_id: practiceSessionId,
+        },
+      });
+      return;
+    }
+
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("practice_sessions")
+        .insert([
+          {
+            student_id: user?.id,
+            created_at: new Date().toLocaleString("en-US", {
+              timeZone: "Europe/London",
+            }),
+          },
+        ])
+        .select("id");
+
+      if (error) {
+        console.error("Error inserting unit:", error.message);
+        // TODO: Error handling here
+        return;
+      }
+
+      if (data) {
+        setPracticeSessionId(data[0].id);
         router.push({
           pathname: "/screens/sessions/PracticeSession",
           params: {
-            title: title,
-            composer: artist,
+            title: item.title,
+            unit_id: item.id,
+            composer: item.composer,
+            practice_session_id: data[0].id,
           },
         });
       }
@@ -120,14 +172,7 @@ export default function NewSession() {
           remountKey={remountKey}
           buttonText="Start"
           onButtonPress={(item) => {
-            router.push({
-              pathname: "/screens/sessions/PracticeSession",
-              params: {
-                title: item.title,
-                id: item.id,
-                composer: item.composer,
-              },
-            });
+            insertNewSession(item);
           }}
         />
 
@@ -135,7 +180,7 @@ export default function NewSession() {
           Add New Piece
         </Button>
 
-        <Button
+        {/* <Button
           style={styles.button}
           onPress={() => {
             router.push({
@@ -149,7 +194,7 @@ export default function NewSession() {
           }}
         >
           Free Practice
-        </Button>
+        </Button> */}
 
         <Button style={styles.button} onPress={() => setQuizVisible(true)}>
           Note Recognition Quiz
