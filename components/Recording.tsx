@@ -4,6 +4,7 @@ import { Audio } from "expo-av";
 import { Button } from "@ui-kitten/components";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import Entypo from "@expo/vector-icons/Entypo";
 
 type SingleRecording = {
   sound: Audio.Sound;
@@ -57,6 +58,8 @@ export default function Recording() {
     }
   }
 
+  async function pauseRecording() {}
+
   async function stopRecording() {
     setIsRecording(false);
     console.log("Stopping recording..");
@@ -73,6 +76,8 @@ export default function Recording() {
       setStopTime(now);
       let updatedRecordings = [...recordings];
       const { sound, status } = await recording.createNewLoadedSoundAsync();
+      console.log(sound);
+      console.log(status);
       if (!status.isLoaded) {
         setRecording(null);
         return;
@@ -108,7 +113,10 @@ export default function Recording() {
           <Text>
             Recording {index + 1} - {recordingLine.duration}
           </Text>
-          <Button onPress={() => recordingLine.sound.replayAsync()}>
+          <Button
+            style={styles.button}
+            onPress={() => recordingLine.sound.replayAsync()}
+          >
             Play
           </Button>
         </View>
@@ -117,9 +125,19 @@ export default function Recording() {
   }
   return (
     <View style={styles.container}>
-      <Button onPress={isRecording ? stopRecording : startRecording}>
-        {isRecording ? "⬛" : "🔴"}
-      </Button>
+      <Button
+        style={styles.buttonOne}
+        onPress={isRecording ? stopRecording : startRecording}
+        accessoryLeft={() => (
+          <Entypo
+            name={
+              isRecording && recording ? "controller-stop" : "controller-record"
+            }
+            size={24}
+            color={isRecording ? "black" : "red"}
+          />
+        )}
+      ></Button>
       {getRecordingLines()}
       <StatusBar style="auto" />
     </View>
@@ -132,4 +150,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
     padding: 1,
   },
+  buttonOne: {
+    backgroundColor: "#FFFFFF",
+
+    marginBottom: 5,
+    height: 60,
+    borderRadius: 5,
+    width: 120,
+  },
+  button: { width: 120, height: 60 },
 });
