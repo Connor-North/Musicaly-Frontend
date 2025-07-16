@@ -5,12 +5,11 @@ import { Text } from "@ui-kitten/components";
 
 const StarRating = () => {
   const [rating, setRating] = useState<any>(null);
-  const [ratingLength, setRatingLength] = useState<number>(0);
 
   useEffect(() => {
     async function getRatingForCurrentUser() {
       const today = new Date();
-      today.setDate(today.getDate() - 30);
+      today.setDate(today.getDate() - 7);
       try {
         const {
           data: { user },
@@ -48,7 +47,15 @@ const StarRating = () => {
   }
 
   if (rating !== 0 || rating !== null) {
-    return <StarRatingDisplay rating={rating} />;
+    return (
+      <>
+        <Text>
+          Your average session rating this week is{" "}
+          {Math.round(rating * 10) / 10}
+        </Text>
+        <StarRatingDisplay rating={rating} />
+      </>
+    );
   }
 };
 

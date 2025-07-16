@@ -1,38 +1,101 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { BarChart } from "react-native-chart-kit";
 import { View, Dimensions, StyleSheet, ViewProps } from "react-native";
 import { Card, Layout, Text, ProgressBar } from "@ui-kitten/components";
 import StarRating from "./StarRating";
+import { supabase } from "@/supabase/auth-helper";
 
 export default function WeeklyChart() {
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
+  const [barData, SetBarData] = useState<any | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const chartConfig = {
-    backgroundGradientFrom: "#1E2923",
-    backgroundGradientFromOpacity: 0,
-    backgroundGradientTo: "#08130D",
-    backgroundGradientToOpacity: 0,
-    color: (opacity = 0) => `#0256FF`,
-    strokeWidth: 2, // optional, default 3
-    barPercentage: 0.5,
-    decimalPlaces: 0,
-    fillShadowGradient: "#0256FF",
-    fillShadowOpacity: 1,
-    fillShadowGradientTo: "#0256FF",
-    fillShadowGradientFromOpacity: 1,
-    fillShadowGradientToOpacity: 1,
-    barRadius: 5,
-  };
+  useEffect(() => {
+    async function getTimesForCurrentUser() {
+      setLoading(true);
+      const today = new Date();
+      today.setDate(today.getDate() - 7);
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        const { data, error } = await supabase
+          .from("practice_sessions")
+          .select(`duration, created_at`)
+          .gt("created_at", today.toISOString())
+          .eq("student_id", user?.id);
 
-  const barData = {
-    labels: ["M", "T", "W", "T", "F", "S", "S"],
-    datasets: [
-      {
-        data: [20, 45, 28, 80, 99, 43, 43],
-      },
-    ],
-  };
+        if (error) {
+          console.error("Error fetching units:", error.message);
+          setLoading(false);
+          // TODO - Deal with error handling
+          return;
+        }
+
+        if (data) {
+          const durationMap = data.reduce((acc, item) => {
+            const date = item.created_at.split("T")[0];
+            acc[date] = (acc[date] || 0) + item.duration;
+            return acc;
+          }, {});
+
+          const today = new Date();
+          const last7Days = Array.from({ length: 7 }, (_, i) => {
+            const d = new Date(today);
+            d.setDate(d.getDate() - (6 - i));
+            const date = d.toISOString().split("T")[0];
+            return {
+              date: date,
+              label: d
+                .toLocaleDateString("en-US", { weekday: "short" })
+                .charAt(0),
+              duration: durationMap[date] || 0,
+            };
+          });
+
+          const modifiedData = {
+            labels: last7Days.map((day) => day.label),
+            datasets: [
+              {
+                data: last7Days.map((day) => day.duration),
+              },
+            ],
+          };
+          SetBarData(modifiedData);
+
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching units:", error);
+        setLoading(false);
+      }
+    }
+    getTimesForCurrentUser();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, { flexDirection: "column" }]}>
+        <Card style={styles.card}>
+          <Text>Just fetching your data...</Text>
+        </Card>
+      </View>
+    );
+  }
+
+  if (!barData) {
+    return (
+      <View style={[styles.container, { flexDirection: "column" }]}>
+        <Card style={styles.card}>
+          <Text>
+            Hey, there's nothing to show yet! Check your practice times here
+            after you've practiced!
+          </Text>
+        </Card>
+      </View>
+    );
+  }
 
   return (
     <>
@@ -40,8 +103,8 @@ export default function WeeklyChart() {
         <Layout style={styles.topContainer} level="1">
           <Card style={styles.card}>
             <View style={styles.cardContent}>
+              <Text>Weekly practice log:</Text>
               <BarChart
-                //style={graphStyle}
                 data={barData}
                 width={screenWidth * 0.9}
                 height={screenHeight * 0.3}
@@ -61,8 +124,8 @@ export default function WeeklyChart() {
             </View>
           </Card>
           <Card style={styles.card}>
-            <Text>You've met 80% of your target for this week!</Text>
-            <ProgressBar animating={false} progress={0.8} size={"large"} />
+            <Text>You've met 18% of your target for this week!</Text>
+            <ProgressBar animating={false} progress={0.18} size={"large"} />
           </Card>
         </Layout>
       </View>
@@ -92,3 +155,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+const chartConfig = {
+  backgroundGradientFrom: "#1E2923",
+  backgroundGradientFromOpacity: 0,
+  backgroundGradientTo: "#08130D",
+  backgroundGradientToOpacity: 0,
+  color: (opacity = 0) => `#0256FF`,
+  strokeWidth: 2, // optional, default 3
+  barPercentage: 0.5,
+  decimalPlaces: 0,
+  fillShadowGradient: "#0256FF",
+  fillShadowOpacity: 1,
+  fillShadowGradientTo: "#0256FF",
+  fillShadowGradientFromOpacity: 1,
+  fillShadowGradientToOpacity: 1,
+  barRadius: 5,
+};
