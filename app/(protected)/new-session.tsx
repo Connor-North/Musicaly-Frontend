@@ -1,19 +1,65 @@
-import { View, StyleSheet, Modal, ScrollView, Pressable } from "react-native";
+import { View, StyleSheet, Modal, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Text, Input, Radio, RadioGroup } from "@ui-kitten/components";
-import React from "react";
-import UnitCard from "@/components/unit-card";
+import React, { useEffect, useContext } from "react";
 import UnitList from "@/components/units/UnitList";
 import { useRouter } from "expo-router";
 import { supabase } from "@/supabase/auth-helper";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { SessionTimeContext } from "@/assets/contexts/sessionTime";
+import { Audio } from "expo-av";
 
 export default function NewSession() {
+  const context = useContext(SessionTimeContext);
+  if (!context) {
+    throw new Error("SessionTimeContext must be used within a SessionProvider");
+  }
+  const { practiceSessionId, setPracticeSessionId } = context;
+
   const router = useRouter();
   const [modalVisible, setModalVisible] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [artist, setArtist] = React.useState("");
   const [remountKey, setRemountKey] = React.useState<number>(0);
+
+  const [quizVisible, setQuizVisible] = React.useState(false);
+  const [quizStep, setQuizStep] = React.useState(0);
+  const [selectedAnswer, setSelectedAnswer] = React.useState<string | null>(
+    null
+  );
+
+  const quizQuestions = [
+    {
+      file: require("../../assets/sounds/F.mp3"),
+      options: ["F4 ✅", "C4", "E4", "G4"],
+    },
+    {
+      file: require("../../assets/sounds/D.mp3"),
+      options: ["C4", "D4 ✅", "G4", "F4"],
+    },
+    {
+      file: require("../../assets/sounds/G.mp3"),
+      options: ["G4 ✅", "D4", "F4", "C4"],
+    },
+    {
+      file: require("../../assets/sounds/E.mp3"),
+      options: ["F4", "E4 ✅", "D4", "C4"],
+    },
+    {
+      file: require("../../assets/sounds/C.mp3"),
+      options: ["C4 ✅", "D4", "E4", "F4"],
+    },
+  ];
+
+  async function playNote(file: any) {
+    const { sound } = await Audio.Sound.createAsync(file);
+    await sound.playAsync();
+  }
+
+  function closeQuiz() {
+    setQuizVisible(false);
+    setQuizStep(0);
+    setSelectedAnswer(null);
+  }
 
   async function insertUnit() {
     let collection;
@@ -48,12 +94,59 @@ export default function NewSession() {
       }
 
       if (data) {
-        console.log("New unit inserted:", data[0]);
+        insertNewSession(data);
+      }
+    } catch (error) {
+      console.error("Error inserting unit:", error);
+    }
+  }
+
+  // Start here -----------------V
+  async function insertNewSession(item: any) {
+    if (practiceSessionId) {
+      router.push({
+        pathname: "/screens/sessions/PracticeSession",
+        params: {
+          title: item.title,
+          unit_id: item.id,
+          composer: item.composer,
+          practice_session_id: practiceSessionId,
+        },
+      });
+      return;
+    }
+
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("practice_sessions")
+        .insert([
+          {
+            student_id: user?.id,
+            created_at: new Date().toLocaleString("en-US", {
+              timeZone: "Europe/London",
+            }),
+          },
+        ])
+        .select("id");
+
+      if (error) {
+        console.error("Error inserting unit:", error.message);
+        // TODO: Error handling here
+        return;
+      }
+
+      if (data) {
+        setPracticeSessionId(data[0].id);
         router.push({
           pathname: "/screens/sessions/PracticeSession",
           params: {
-            title: title,
-            composer: artist,
+            title: item.title,
+            unit_id: item.id,
+            composer: item.composer,
+            practice_session_id: data[0].id,
           },
         });
       }
@@ -79,14 +172,7 @@ export default function NewSession() {
           remountKey={remountKey}
           buttonText="Start"
           onButtonPress={(item) => {
-            router.push({
-              pathname: "/screens/sessions/PracticeSession",
-              params: {
-                title: item.title,
-                id: item.id,
-                composer: item.composer,
-              },
-            });
+            insertNewSession(item);
           }}
         />
 
@@ -94,7 +180,7 @@ export default function NewSession() {
           Add New Piece
         </Button>
 
-        <Button
+        {/* <Button
           style={styles.button}
           onPress={() => {
             router.push({
@@ -108,6 +194,10 @@ export default function NewSession() {
           }}
         >
           Free Practice
+        </Button> */}
+
+        <Button style={styles.button} onPress={() => setQuizVisible(true)}>
+          Note Recognition Quiz
         </Button>
 
         <Modal
@@ -161,6 +251,72 @@ export default function NewSession() {
                 >
                   Let's practice!
                 </Button>
+              )}
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          visible={quizVisible}
+          animationType="slide"
+          presentationStyle="pageSheet"
+          onRequestClose={closeQuiz}
+        >
+          <View style={styles.mainView}>
+            <View style={styles.view} className="p-12 rounded-lg bg-white">
+              <Text category="h4">Question {quizStep + 1} of 5</Text>
+              <Text>&nbsp;</Text>
+              <Button onPress={() => playNote(quizQuestions[quizStep].file)}>
+                🔊 Play Note
+              </Button>
+              <Text>&nbsp;</Text>
+              {quizQuestions[quizStep].options.map((opt, index) => {
+                const isCorrect = opt.includes("✅");
+                const displayText = opt.replace(" ✅", "");
+                let status = "default";
+
+                if (selectedAnswer) {
+                  if (selectedAnswer === displayText && isCorrect) {
+                    status = "success";
+                  } else if (selectedAnswer === displayText && !isCorrect) {
+                    status = "danger";
+                  } else if (isCorrect) {
+                    status = "success";
+                  }
+                }
+
+                return (
+                  <Button
+                    key={index}
+                    style={{ marginVertical: 4 }}
+                    status={status}
+                    onPress={() => {
+                      if (!selectedAnswer) setSelectedAnswer(displayText);
+                    }}
+                  >
+                    {displayText}
+                  </Button>
+                );
+              })}
+              {selectedAnswer && (
+                <>
+                  <Text>&nbsp;</Text>
+                  <Button
+                    onPress={() => {
+                      if (quizStep < quizQuestions.length - 1) {
+                        setQuizStep(quizStep + 1);
+                        setSelectedAnswer(null);
+                      } else {
+                        closeQuiz();
+                        setSelectedAnswer(null);
+                      }
+                    }}
+                  >
+                    {quizStep === quizQuestions.length - 1
+                      ? "Finish"
+                      : "Next ➡️"}
+                  </Button>
+                </>
               )}
             </View>
           </View>
