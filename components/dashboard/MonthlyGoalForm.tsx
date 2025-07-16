@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { Card, Text, Input, Button, ProgressBar } from "@ui-kitten/components";
-import { SafeAreaView, FlatList, StyleSheet, View } from "react-native";
+import {
+  SafeAreaView,
+  FlatList,
+  StyleSheet,
+  View,
+  ScrollView,
+} from "react-native";
 import { supabase } from "@/supabase/auth-helper";
-
-// render goals list from returned data
-// check list initially has 5 empty goals
-// implement logic to add a new goal (onPress ====> INSERT) | add created_at
 
 interface Goal {
   id?: string;
@@ -21,12 +23,10 @@ let initialGoals: Goal[] = [];
 
 export default function MonthlyGoalsForm() {
   const [data, setData] = useState<Goal[]>(initialGoals);
-  const [goalCount, setGoalCount] = useState(data.length);
+  const [newTarget, setNewTarget] = useState<string>("");
   const [newGoals, setNewGoals] = useState<string[]>(
     Array(5 - data.length).fill("")
   );
-  console.log(initialGoals.length);
-  console.log(data.length);
 
   useEffect(() => {
     async function getGoalsForCurrentUser() {
@@ -42,7 +42,7 @@ export default function MonthlyGoalsForm() {
 
         if (error) {
           console.error("Error fetching units:", error.message);
-          // TODO - Deal with error handling
+
           return;
         }
 
@@ -63,7 +63,11 @@ export default function MonthlyGoalsForm() {
     setNewGoals(updated);
   };
 
-  //Handler for adding progress
+  const handleTargetChange = (targetText: string) => {
+    setNewTarget(targetText);
+    console.log("input changed", targetText);
+  };
+
   async function updateProgress(index: number, amount: number) {
     let goalStatus;
     setData((currentData) => {
@@ -202,97 +206,113 @@ export default function MonthlyGoalsForm() {
     }
   }
 
-  //NOTE - Consider - handle logic here for updating on Supabase? Or render all locally and handle elsewhere?
-
   if (!newGoals) {
-    console.log("LOADING!!!!!!!!!!!!!!!!");
+    console.log("LOADING");
     return <Text>Loading...</Text>;
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Card style={styles.card}>
-        <FlatList
-          data={data}
-          renderItem={({ item, index }) => (
-            <>
-              <View style={{ paddingVertical: 15 }}>
-                <Text style={styles.item}>{item.goal_description}</Text>
-                <View style={styles.progressRow}>
-                  <Button
-                    size="tiny"
-                    onPress={() => deleteGoal(index)}
-                    appearance="outline"
-                    status="danger"
-                  >
-                    ❌
-                  </Button>
-                  <Button
-                    style={{ marginHorizontal: 7 }}
-                    size="tiny"
-                    onPress={() => updateProgress(index, -1)}
-                  >
-                    -
-                  </Button>
-                  <ProgressBar
-                    style={styles.progressBar}
-                    animating={false}
-                    progress={item.goal_status / 5}
-                  />
+    <ScrollView>
+      <SafeAreaView style={styles.container}>
+        <Card style={styles.targetCard}>
+          <Text style={styles.title}>Set and check your goals! 🎯</Text>
+          <Card style={styles.card}>
+            <View style={styles.inputContainer}>
+              <Text style={styles.item}>Set your weekly target</Text>
+              <Input
+                style={styles.input}
+                placeholder="Insert your target"
+                value={newTarget}
+                onChangeText={(targetText) => handleTargetChange(targetText)}
+              />
+              <Button>Set</Button>
+            </View>
+          </Card>
+          <FlatList
+            data={data}
+            renderItem={({ item, index }) => (
+              <>
+                <View style={{ paddingVertical: 15 }}>
+                  <Text style={styles.item}>{item.goal_description}</Text>
+                  <View style={styles.progressRow}>
+                    <Button
+                      size="tiny"
+                      onPress={() => deleteGoal(index)}
+                      appearance="outline"
+                      status="danger"
+                    >
+                      ❌
+                    </Button>
+                    <Button
+                      style={{ marginHorizontal: 7 }}
+                      size="tiny"
+                      onPress={() => updateProgress(index, -1)}
+                    >
+                      -
+                    </Button>
+                    <ProgressBar
+                      style={styles.progressBar}
+                      animating={false}
+                      progress={item.goal_status / 5}
+                    />
 
-                  <Button size="tiny" onPress={() => updateProgress(index, 1)}>
-                    +
-                  </Button>
+                    <Button
+                      size="tiny"
+                      onPress={() => updateProgress(index, 1)}
+                    >
+                      +
+                    </Button>
+                  </View>
+                  {item.goal_status === 5 ? (
+                    <View style={styles.successContainer}>
+                      <Text style={styles.success} status="success">
+                        You have reached your goal! 🎉
+                      </Text>
+                    </View>
+                  ) : (
+                    <View style={styles.successContainer}>
+                      <Text style={styles.success} status="success"></Text>
+                    </View>
+                  )}
                 </View>
-                {item.goal_status === 5 ? (
-                  <View style={styles.successContainer}>
-                    <Text style={styles.success} status="success">
-                      You have reached your goal! 🎉
-                    </Text>
-                  </View>
-                ) : (
-                  <View style={styles.successContainer}>
-                    <Text style={styles.success} status="success"></Text>
-                  </View>
-                )}
-              </View>
-            </>
-          )}
-          keyExtractor={(item) => item.created_at}
-          ItemSeparatorComponent={() => (
-            <View style={{ height: 1, backgroundColor: "#ccc" }} />
-          )}
-          ListHeaderComponent={() => (
-            <Text style={styles.title}>Set and check your goals! 🎯</Text>
-          )}
-        />
+              </>
+            )}
+            keyExtractor={(item) => item.created_at}
+            ItemSeparatorComponent={() => (
+              <View style={{ height: 1, backgroundColor: "#ccc" }} />
+            )}
+          />
 
-        {newGoals.map((goal, index) => (
-          <View key={index} style={styles.inputContainer}>
-            <Input
-              placeholder={`Add goal #${data.length + index + 1}`}
-              value={goal}
-              onChangeText={(text) => handleInputChange(text, index)}
-              style={styles.input}
-            />
-            <Button onPress={() => addGoal(index)}>Add Goal!</Button>
-          </View>
-        ))}
-      </Card>
-    </SafeAreaView>
+          {newGoals.map((goal, index) => (
+            <View key={index} style={styles.inputContainer}>
+              <Input
+                placeholder={`Add goal #${data.length + index + 1}`}
+                value={goal}
+                onChangeText={(text) => handleInputChange(text, index)}
+                style={styles.input}
+              />
+              <Button onPress={() => addGoal(index)}>Add Goal!</Button>
+            </View>
+          ))}
+        </Card>
+      </SafeAreaView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    // width: "90%",
     flex: 1,
     padding: 16,
+    alignItems: "center",
   },
   card: {
     width: "90%",
     marginVertical: 10,
     padding: 15,
   },
+  targetCard: {},
   header: {
     fontSize: 20,
     marginBottom: 20,
@@ -323,6 +343,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   input: {
+    width: "90%",
     flex: 1,
     borderWidth: 1,
     borderColor: "#999",
