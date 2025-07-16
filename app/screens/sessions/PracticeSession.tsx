@@ -37,8 +37,6 @@ export default function PracticeSession() {
   }, [unitTime]);
 
   async function handleSave(navPath: any) {
-    console.log("unitTime:", unitTime);
-    console.log("unitTimeRef.current:", unitTimeRef.current);
     const time = Math.floor(unitTimeRef.current);
     try {
       const {
