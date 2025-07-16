@@ -5,6 +5,7 @@ import { Button } from "@ui-kitten/components";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 type SingleRecording = {
   sound: Audio.Sound;
@@ -123,6 +124,10 @@ export default function Recording() {
       );
     });
   }
+
+  function clearRecordings() {
+    setRecordings([]);
+  }
   return (
     <View style={styles.container}>
       <Button
@@ -138,8 +143,24 @@ export default function Recording() {
           />
         )}
       ></Button>
+
       {getRecordingLines()}
       <StatusBar style="auto" />
+      {/* <Button
+          accessoryLeft={() => (
+            <AntDesign name="delete" size={24} color="black" />
+          )}
+        ></Button> */}
+
+      {recordings.length > 0 && (
+        <Button
+          style={styles.buttonTwo}
+          onPress={clearRecordings}
+          appearance="ghost"
+        >
+          Clear Recordings
+        </Button>
+      )}
     </View>
   );
 }
@@ -159,4 +180,7 @@ const styles = StyleSheet.create({
     width: 120,
   },
   button: { width: 120, height: 60 },
+  buttonTwo: {
+    marginTop: 10,
+  },
 });
