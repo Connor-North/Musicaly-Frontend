@@ -8,7 +8,9 @@ import { supabase } from "@/supabase/auth-helper";
 export default function WeeklyChart() {
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
-  const [barData, SetBarData] = useState<any | null>(null);
+  const [barData, setBarData] = useState<any | null>(null);
+  const [target, setTarget] = useState<number | null>(null);
+  const [actual, setActual] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -34,9 +36,11 @@ export default function WeeklyChart() {
         }
 
         if (data) {
+          let duration = 0;
           const durationMap = data.reduce((acc, item) => {
             const date = item.created_at.split("T")[0];
             acc[date] = (acc[date] || 0) + item.duration;
+            duration += item.duration;
             return acc;
           }, {});
 
@@ -62,8 +66,8 @@ export default function WeeklyChart() {
               },
             ],
           };
-          SetBarData(modifiedData);
-
+          setBarData(modifiedData);
+          setActual(duration);
           setLoading(false);
         }
       } catch (error) {
@@ -72,6 +76,39 @@ export default function WeeklyChart() {
       }
     }
     getTimesForCurrentUser();
+  }, []);
+
+  useEffect(() => {
+    async function getTargetsForCurrentUser() {
+      setLoading(true);
+      const today = new Date();
+      today.setDate(today.getDate() - 7);
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        const { data, error } = await supabase
+          .from("students")
+          .select(`target_minutes`)
+          .eq("id", user?.id);
+
+        if (error) {
+          console.error("Error fetching units:", error.message);
+          setLoading(false);
+          // TODO - Deal with error handling
+          return;
+        }
+
+        if (data) {
+          setTarget(data[0].target_minutes);
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching units:", error);
+        setLoading(false);
+      }
+    }
+    getTargetsForCurrentUser();
   }, []);
 
   if (loading) {
@@ -124,8 +161,22 @@ export default function WeeklyChart() {
             </View>
           </Card>
           <Card style={styles.card}>
-            <Text>You've met 18% of your target for this week!</Text>
-            <ProgressBar animating={false} progress={0.18} size={"large"} />
+            {target && actual ? (
+              <View style={styles.cardContent}>
+                <Text style={{ textAlign: "center", marginBottom: 4 }}>
+                  With {actual} minutes down you're at&nbsp;
+                  {Math.round((actual / target) * 100)}% vs. your target this
+                  week!
+                </Text>
+              </View>
+            ) : (
+              <Text>Set a target time to see your stats!</Text>
+            )}
+            <ProgressBar
+              animating={false}
+              progress={actual / target || 0}
+              size={"large"}
+            />
           </Card>
         </Layout>
       </View>
@@ -153,6 +204,7 @@ const styles = StyleSheet.create({
     width: "90%",
     alignItems: "center",
     justifyContent: "center",
+    textAlign: "center",
   },
 });
 

@@ -50,8 +50,7 @@ const StarRating = () => {
     return (
       <>
         <Text>
-          Your average session rating this week is{" "}
-          {Math.round(rating * 10) / 10}
+          Your session average this week is {Math.round(rating * 10) / 10}
         </Text>
         <StarRatingDisplay rating={rating} />
       </>
