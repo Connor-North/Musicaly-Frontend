@@ -12,6 +12,7 @@ import PSU from "./PSU";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SessionTimeContext } from "@/assets/contexts/sessionTime";
+import Recording from "@/components/Recording";
 
 export default function PracticeSession() {
   const context = useContext(SessionTimeContext);
@@ -51,6 +52,7 @@ export default function PracticeSession() {
             unitComposer={unitComposer}
             unitTitle={unitTitle}
           />
+          <Recording />
           <Text>&nbsp;</Text>
           <Input
             multiline={true}
