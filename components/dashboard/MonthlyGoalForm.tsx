@@ -47,7 +47,7 @@ export default function MonthlyGoalsForm() {
         }
 
         if (data) {
-          initialGoals = data;
+          setData(data);
           console.log("Units for current user:", data);
         }
       } catch (error) {
@@ -55,7 +55,7 @@ export default function MonthlyGoalsForm() {
       }
     }
     getGoalsForCurrentUser();
-  }, [data]);
+  }, []);
 
   const handleInputChange = (text: string, index: number) => {
     const updated = [...newGoals];
@@ -154,7 +154,7 @@ export default function MonthlyGoalsForm() {
 
         setNewGoals((currentGoals) => {
           const updatedNewGoals = [...currentGoals];
-          updatedNewGoals.splice(index, 1);
+          updatedNewGoals[index] = "";
           return updatedNewGoals;
         });
       }
@@ -162,22 +162,45 @@ export default function MonthlyGoalsForm() {
       console.error("Error inserting goal:", error);
     }
   }
+  useEffect(() => {
+    const remainingInputs = 5 - data.length;
 
-  // const newGoal: Goal = {
-  //   id: Math.random().toString(),
-  //   student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044z", // FIXME - replace with actual value, extract from data, or from session object of Supabase session?
-  //   goal_description: goalText,
-  //   goal_date: new Date().toLocaleString("en-US", {
-  //     timeZone: "Europe/London",
-  //   }),
-  //   goal_status: 0,
-  //   created_at: new Date().toLocaleString("en-US", {
-  //     timeZone: "Europe/London",
-  //   }),
-  //   updated_at: new Date().toLocaleString("en-US", {
-  //     timeZone: "Europe/London",
-  //   }),
-  // };
+    if (remainingInputs > 0) {
+      setNewGoals((currentInputs) => {
+        const updated = [...currentInputs.slice(0, remainingInputs)];
+        const extraInputs = Array(remainingInputs - updated.length).fill("");
+        return [...updated, ...extraInputs];
+      });
+    } else {
+      setNewGoals([]);
+    }
+  }, [data]);
+
+  async function deleteGoal(index: number) {
+    const goalToDelete = data[index];
+    console.log(goalToDelete);
+    try {
+      const { error, data } = await supabase
+        .from("student_monthly_goals")
+        .delete()
+        .eq("id", goalToDelete.id)
+        .select();
+      if (error) {
+        console.error("Failed to delete goal");
+        return;
+      }
+      if (data) {
+        setData((currentData) => {
+          const updated = [...currentData];
+          updated.splice(index, 1);
+          return updated;
+        });
+        console.log("Goal deleted successfully");
+      }
+    } catch (error) {
+      console.error("An error occurred while deleting the goal", error);
+    }
+  }
 
   //NOTE - Consider - handle logic here for updating on Supabase? Or render all locally and handle elsewhere?
 
@@ -196,7 +219,19 @@ export default function MonthlyGoalsForm() {
               <View style={{ paddingVertical: 15 }}>
                 <Text style={styles.item}>{item.goal_description}</Text>
                 <View style={styles.progressRow}>
-                  <Button size="tiny" onPress={() => updateProgress(index, -1)}>
+                  <Button
+                    size="tiny"
+                    onPress={() => deleteGoal(index)}
+                    appearance="outline"
+                    status="danger"
+                  >
+                    ❌
+                  </Button>
+                  <Button
+                    style={{ marginHorizontal: 7 }}
+                    size="tiny"
+                    onPress={() => updateProgress(index, -1)}
+                  >
                     -
                   </Button>
                   <ProgressBar
