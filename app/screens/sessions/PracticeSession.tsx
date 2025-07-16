@@ -86,27 +86,27 @@ export default function PracticeSession() {
         className="justify-center flex-1 p-4"
         style={styles.container}
       >
-        {/* <Text style={{ margin: 20 }} category="h6">
-            Total Session Time: {sessionTime} minutes
-          </Text>
+        <Text style={{ margin: 20 }} category="h6">
+          Total Session Time: {sessionTime} minutes
+        </Text>
 
-          <PSU
-            setSessionTime={setSessionTime}
-            unitId={unitId}
-            unitComposer={unitComposer}
-            unitTitle={unitTitle}
-          />
-          <Recording />
-          <Text>&nbsp;</Text>
-          <Input
-            multiline={true}
-            textStyle={styles.inputTextStyle}
-            placeholder="Add Notes"
-            {...multilineInputState}
-            value={note}
-            onChangeText={(value) => setNote(value)}
-          />
-          <Text>&nbsp;</Text>
+        <PSU
+          setSessionTime={setSessionTime}
+          unitId={unitId}
+          unitComposer={unitComposer}
+          unitTitle={unitTitle}
+        />
+        <Recording />
+        <Text>&nbsp;</Text>
+        <Input
+          multiline={true}
+          textStyle={styles.inputTextStyle}
+          placeholder="Add Notes"
+          {...multilineInputState}
+          value={note}
+          onChangeText={(value) => setNote(value)}
+        />
+        <Text>&nbsp;</Text>
 
         <Text>&nbsp;</Text>
         {note.length > 10 || unitTitle === "Free Play" ? (
