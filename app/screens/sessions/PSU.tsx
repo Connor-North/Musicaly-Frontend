@@ -81,8 +81,8 @@ export default function PSU({ unitId, unitComposer, unitTitle }: PSUProps) {
             {!isRunning ? "▶" : "||"}
           </Button>
         </View>
+        <Metronome tempo={80} />
       </Card>
-      <Metronome tempo={80} />
     </View>
   );
 }

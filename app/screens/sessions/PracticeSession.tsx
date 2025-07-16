@@ -6,13 +6,14 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SessionTimeContext } from "@/assets/contexts/sessionTime";
 import Recording from "@/components/Recording";
+import { supabase } from "@/supabase/auth-helper";
 
 export default function PracticeSession() {
   const context = useContext(SessionTimeContext);
   if (!context) {
     throw new Error("SessionTimeContext must be used within a SessionProvider");
   }
-  const { setSessionTime, unitTime, setUnitTime } = context;
+  const { sessionTime, setSessionTime, unitTime, setUnitTime } = context;
   const { title, unit_id, composer, practice_session_id } =
     useLocalSearchParams();
   const unitId = Array.isArray(unit_id) ? unit_id[0] : unit_id;
@@ -91,7 +92,6 @@ export default function PracticeSession() {
         </Text>
 
         <PSU
-          setSessionTime={setSessionTime}
           unitId={unitId}
           unitComposer={unitComposer}
           unitTitle={unitTitle}
