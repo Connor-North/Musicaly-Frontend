@@ -2,7 +2,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, Modal, View, Text, TextInput } from "react-native";
 import UnitList from "@/components/units/UnitList";
 import React from "react";
-import UnitCard from "@/components/unit-card";
+import UnitCard from "@/components/units/UnitCard";
 import { Input } from "@ui-kitten/components";
 
 export default function Library() {
