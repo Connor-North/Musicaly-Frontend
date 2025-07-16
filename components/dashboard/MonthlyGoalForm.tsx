@@ -18,25 +18,15 @@ interface Goal {
 }
 
 let initialGoals: Goal[] = [];
-// [
-//   {
-//     id: "dd59c8c7-a8a1-4b65-9db2-5d787ab1dd4d",
-//     student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044f",
-//     goal_description: "play section B invention no. 8 RH only",
-//     goal_date: "2025-07-19T12:04:28.149551+00:00",
-//     goal_status: 4,
-//     created_at: "2025-07-05T12:04:28.149551+00:00",
-//     updated_at: "2025-07-05T12:04:28.149551+00:00",
-//   },
-// ];
 
 export default function MonthlyGoalsForm() {
-  // NOTE - do I need to count goal count?
   const [data, setData] = useState<Goal[]>(initialGoals);
   const [goalCount, setGoalCount] = useState(data.length);
   const [newGoals, setNewGoals] = useState<string[]>(
     Array(5 - data.length).fill("")
   );
+  console.log(initialGoals.length);
+  console.log(data.length);
 
   useEffect(() => {
     async function getGoalsForCurrentUser() {
@@ -47,6 +37,7 @@ export default function MonthlyGoalsForm() {
         const { data, error } = await supabase
           .from("student_monthly_goals")
           .select("*")
+          .lt("goal_status", 5)
           .eq("student_id", user?.id);
 
         if (error) {
@@ -64,7 +55,7 @@ export default function MonthlyGoalsForm() {
       }
     }
     getGoalsForCurrentUser();
-  }, []);
+  }, [data]);
 
   const handleInputChange = (text: string, index: number) => {
     const updated = [...newGoals];
@@ -74,9 +65,11 @@ export default function MonthlyGoalsForm() {
 
   //Handler for adding progress
   async function updateProgress(index: number, amount: number) {
+    let goalStatus;
     setData((currentData) => {
       const updated = [...currentData];
       const goal = { ...updated[index] };
+      console.log(goal);
       goal.goal_status = goal.goal_status + amount;
       if (goal.goal_status > 5) {
         goal.goal_status = 5;
@@ -84,8 +77,38 @@ export default function MonthlyGoalsForm() {
         goal.goal_status = 0;
       }
       updated[index] = goal;
+      goalStatus = goal;
       return updated;
     });
+    try {
+      const { error, data } = await supabase
+        .from("student_monthly_goals")
+        .update([{ goal_status: goalStatus.goal_status }])
+        .eq("id", goalStatus.id)
+        .select("goal_status");
+      if (error) {
+        console.error("Progress not updated", error);
+      }
+      if (data) {
+        console.log("Progress updated successfully", data);
+      }
+    } catch (error) {
+      console.error("there was a problem updating your progress");
+      setData((currentData) => {
+        const updated = [...currentData];
+        const goal = { ...updated[index] };
+        console.log(goal);
+        goal.goal_status = goal.goal_status + amount;
+        if (goal.goal_status > 5) {
+          goal.goal_status = 5;
+        } else if (goal.goal_status < 0) {
+          goal.goal_status = 0;
+        }
+        updated[index] = goal;
+        goalStatus = goal;
+        return updated;
+      });
+    }
   }
 
   // Handler for adding a new goal
@@ -157,6 +180,11 @@ export default function MonthlyGoalsForm() {
   // };
 
   //NOTE - Consider - handle logic here for updating on Supabase? Or render all locally and handle elsewhere?
+
+  if (!newGoals) {
+    console.log("LOADING!!!!!!!!!!!!!!!!");
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
