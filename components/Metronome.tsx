@@ -37,7 +37,6 @@ const Metronome: React.FC<MetronomeProps> = ({
   };
 
   const startMetronome = () => {
-    if (isPlaying) return;
     setIsPlaying(true);
     playClick();
     const interval = 60000 / bpm;
@@ -63,9 +62,14 @@ const Metronome: React.FC<MetronomeProps> = ({
         minimumTrackTintColor={"#A6C1FF"}
         onValueChange={(value) => {
           setBpm(Math.round(value));
+        }}
+        onSlidingComplete={(value) => {
+          const newBpm = Math.round(value);
+          setBpm(newBpm);
+
           if (isPlaying) {
-            startMetronome();
             stopMetronome();
+            startMetronome();
           }
         }}
       />
