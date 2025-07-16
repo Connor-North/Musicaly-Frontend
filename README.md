@@ -1,50 +1,56 @@
-# Welcome to your Expo app 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# 🎵 Musicaly
 
-## Get started
+A musician’s practice companion — log your progress, sharpen your ears, and stay in time.
 
-1. Install dependencies
+Musicaly is a React Native app designed for musicians who want to keep track of their practice sessions while using helpful tools like a built-in metronome, personal notes, and an ear training game. Whether you’re a beginner learning your first scales or a seasoned player tracking your sessions, Musicaly helps make your practice more intentional and more effective.
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+### ✨ Features
 
-   ```bash
-   npx expo start
-   ```
+- 🎯 **Practice Logging**  
+  Keep track of what you practiced and for how long, so you can build consistent habits and track improvement over time.
 
-In the output, you'll find options to open the app in a
+- 📝 **Practice Notes**  
+  Write and save notes alongside your practice sessions — jot down goals, reminders, or anything you want to reflect on later.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- ⏱️ **Metronome**  
+  Use the metronome to keep you on beat, enforcing good habits and developing your timing.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- 👂 **Ear Training Game**  
+  Test and train your aural recognition with a simple quiz game that sharpens your ear for intervals, chords, and more.
 
-## Get a fresh project
+---
 
-When you're ready, run:
+### 🛠️ Tech Stack
+
+- [React Native](https://reactnative.dev/) + [Expo](https://expo.dev/)
+- [UI Kitten](https://akveo.github.io/react-native-ui-kitten/) for styling and components
+- `@react-native-community/slider` for smooth tempo control
+- `expo-av` for audio playback
+
+---
+
+### 🚀 Getting Started
+
+To run the app locally:
 
 ```bash
-npm run reset-project
+git clone https://github.com/Connor-North/Musicaly-Frontend.git
+cd Musicaly-Frontend
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+You can then run it in an iOS or Android simulator, or on a physical device using the [Expo Go](https://expo.dev/client) app.
 
-## Learn more
+---
 
-To learn more about developing your project with Expo, look at the following resources:
+### 📂 Repository Structure
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+/components       # Reusable React Native components (e.g., Metronome)
+/assets           # Audio assets (e.g., click sounds)
+/screens          # App screens (e.g., Home, Practice Log, Ear Training)
+```
