@@ -5,7 +5,7 @@ import PSU from "./PSU";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SessionTimeContext } from "@/assets/contexts/sessionTime";
-import { supabase } from "@/supabase/auth-helper";
+import Recording from "@/components/Recording";
 
 export default function PracticeSession() {
   const context = useContext(SessionTimeContext);
@@ -89,22 +89,24 @@ export default function PracticeSession() {
         {/* <Text style={{ margin: 20 }} category="h6">
             Total Session Time: {sessionTime} minutes
           </Text>
-          <Text>{practiceSessionId}</Text> */}
-        <PSU
-          unitId={unitId}
-          unitComposer={unitComposer}
-          unitTitle={unitTitle}
-        />
-        <Text>&nbsp;</Text>
-        <Input
-          multiline={true}
-          textStyle={styles.inputTextStyle}
-          placeholder="Add Notes"
-          {...multilineInputState}
-          value={note}
-          onChangeText={(value) => setNote(value)}
-        />
-        <Text>&nbsp;</Text>
+
+          <PSU
+            setSessionTime={setSessionTime}
+            unitId={unitId}
+            unitComposer={unitComposer}
+            unitTitle={unitTitle}
+          />
+          <Recording />
+          <Text>&nbsp;</Text>
+          <Input
+            multiline={true}
+            textStyle={styles.inputTextStyle}
+            placeholder="Add Notes"
+            {...multilineInputState}
+            value={note}
+            onChangeText={(value) => setNote(value)}
+          />
+          <Text>&nbsp;</Text>
 
         <Text>&nbsp;</Text>
         {note.length > 10 || unitTitle === "Free Play" ? (
