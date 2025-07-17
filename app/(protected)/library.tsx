@@ -120,10 +120,7 @@ export default function Library() {
   );
 
   return (
-    <SafeAreaView
-      className="justify-center flex-1 p-4"
-      style={styles.container}
-    >
+    <SafeAreaView style={styles.container}>
       <UnitList
         remountKey={remountKey}
         buttonText="Edit"
@@ -140,10 +137,7 @@ export default function Library() {
           setModalVisible(false);
         }}
       >
-        <View
-          style={styles.mainView}
-          className="flex-1 items-center justify-center"
-        >
+        <View style={styles.mainView}>
           {selectedItem ? (
             <Card>
               <Text category="h4">{selectedItem.title}</Text>
