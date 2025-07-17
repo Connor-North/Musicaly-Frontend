@@ -338,10 +338,11 @@ const styles = StyleSheet.create({
   },
   view: {
     position: "relative",
-    padding: "15%",
+    paddingVertical: "15%",
   },
   list: {
     height: "70%",
+    width: "80%",
   },
   // mainView: {
   //   justifyContent: "center",

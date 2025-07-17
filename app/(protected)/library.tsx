@@ -121,14 +121,15 @@ export default function Library() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <UnitList
-        remountKey={remountKey}
-        buttonText="Edit"
-        onButtonPress={(item) => {
-          listUnitDetails(item);
-        }}
-      />
-
+      <View style={{ width: "90%" }}>
+        <UnitList
+          remountKey={remountKey}
+          buttonText="Edit"
+          onButtonPress={(item) => {
+            listUnitDetails(item);
+          }}
+        />
+      </View>
       <Modal
         visible={modalVisible}
         animationType="slide"

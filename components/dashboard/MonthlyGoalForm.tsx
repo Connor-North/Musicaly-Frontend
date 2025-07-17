@@ -6,6 +6,7 @@ import {
   StyleSheet,
   View,
   ScrollView,
+  Alert,
 } from "react-native";
 import { supabase } from "@/supabase/auth-helper";
 
@@ -84,6 +85,7 @@ export default function MonthlyGoalsForm() {
         console.error("Target not updated", error);
       }
       if (data) {
+        alert("Goal set!");
         console.log("Target updated successfully", data);
       }
     } catch (error) {
@@ -124,7 +126,6 @@ export default function MonthlyGoalsForm() {
       setData((currentData) => {
         const updated = [...currentData];
         const goal = { ...updated[index] };
-        console.log(goal);
         goal.goal_status = goal.goal_status + amount;
         if (goal.goal_status > 5) {
           goal.goal_status = 5;
