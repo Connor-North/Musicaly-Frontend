@@ -64,9 +64,32 @@ export default function MonthlyGoalsForm() {
   };
 
   const handleTargetChange = (targetText: string) => {
-    setNewTarget(targetText);
-    console.log("input changed", targetText);
+    const filteredText = targetText.replace(/[^0-9]/g, "");
+    setNewTarget(filteredText);
+    console.log("input changed", filteredText);
   };
+
+  async function updateTarget(target: string) {
+    const number = Number(target);
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { error, data } = await supabase
+        .from("students")
+        .update([{ target_minutes: number }])
+        .eq("id", user?.id)
+        .select("target_minutes");
+      if (error) {
+        console.error("Target not updated", error);
+      }
+      if (data) {
+        console.log("Target updated successfully", data);
+      }
+    } catch (error) {
+      console.error("there was a problem updating your progress");
+    }
+  }
 
   async function updateProgress(index: number, amount: number) {
     let goalStatus;
@@ -212,7 +235,6 @@ export default function MonthlyGoalsForm() {
   }
 
   return (
-    // <ScrollView>
     <SafeAreaView style={styles.container}>
       <Card style={styles.card}>
         <Text category="h4" style={styles.title}>
@@ -229,7 +251,7 @@ export default function MonthlyGoalsForm() {
               value={newTarget}
               onChangeText={(targetText) => handleTargetChange(targetText)}
             />
-            <Button>Set</Button>
+            <Button onPress={() => updateTarget(newTarget)}>Set</Button>
           </View>
         </Card>
         <FlatList
@@ -294,18 +316,16 @@ export default function MonthlyGoalsForm() {
               onChangeText={(text) => handleInputChange(text, index)}
               style={styles.input}
             />
-            <Button onPress={() => addGoal(index)}>Add Goal!</Button>
+            <Button onPress={() => addGoal(index)}>Set</Button>
           </View>
         ))}
       </Card>
     </SafeAreaView>
-    // </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    // width: "90%",
     flex: 1,
     paddingLeft: 16,
     paddingRight: 16,

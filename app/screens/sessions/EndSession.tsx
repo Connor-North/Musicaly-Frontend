@@ -161,5 +161,6 @@ const styles = StyleSheet.create({
   },
   innerStyle: {
     alignItems: "center",
+    width: screenWidth * 0.8,
   },
 });
