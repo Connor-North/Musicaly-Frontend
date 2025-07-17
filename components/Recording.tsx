@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, ScrollView } from "react-native";
 import { Audio } from "expo-av";
 import { Button } from "@ui-kitten/components";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
+import Entypo from "@expo/vector-icons/Entypo";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 type SingleRecording = {
   sound: Audio.Sound;
@@ -15,7 +17,6 @@ export default function Recording() {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [recordings, setRecordings] = useState<SingleRecording[]>([]);
   const [permissionResponse, requestPermission] = Audio.usePermissions();
-  const [message, setMessage] = useState("");
   const [startTime, setStartTime] = useState<number | null>(null);
   const [stopTime, setStopTime] = useState<number | null>(null);
 
@@ -32,7 +33,6 @@ export default function Recording() {
   }, [stopTime]);
 
   async function startRecording() {
-    setIsRecording(true);
     const now = Date.now();
     setStartTime(now);
     try {
@@ -50,6 +50,7 @@ export default function Recording() {
       );
 
       setRecording(recording);
+      setIsRecording(true);
     } catch (err) {
       setStartTime(null);
       // TODO - deal with error states
@@ -73,6 +74,8 @@ export default function Recording() {
       setStopTime(now);
       let updatedRecordings = [...recordings];
       const { sound, status } = await recording.createNewLoadedSoundAsync();
+      console.log(sound);
+      console.log(status);
       if (!status.isLoaded) {
         setRecording(null);
         return;
@@ -100,7 +103,7 @@ export default function Recording() {
     const totalSeconds = seconds % 60;
     return `${minutes}:${totalSeconds.toString().padStart(2, "0")}`;
   }
-
+  //  async function
   function getRecordingLines() {
     return recordings.map((recordingLine, index) => {
       return (
@@ -108,28 +111,87 @@ export default function Recording() {
           <Text>
             Recording {index + 1} - {recordingLine.duration}
           </Text>
-          <Button onPress={() => recordingLine.sound.replayAsync()}>
-            Play
-          </Button>
+          <View style={{ flexDirection: "row" }}>
+            <Button
+              style={styles.button}
+              onPress={() => recordingLine.sound.replayAsync()}
+            >
+              Play
+            </Button>
+            <View style={{ padding: 5 }}>
+              <Button
+                onPress={() => {
+                  clearRecording(index);
+                }}
+                accessoryLeft={() => (
+                  <AntDesign name="delete" size={24} color="black" />
+                )}
+              ></Button>
+            </View>
+          </View>
         </View>
       );
     });
   }
+  function clearRecording(index) {
+    setRecordings((currentRecordings) => {
+      const updated = [...currentRecordings];
+      updated.splice(index, 1);
+      return updated;
+    });
+  }
+  function clearRecordings() {
+    setRecordings([]);
+  }
   return (
     <View style={styles.container}>
-      <Button onPress={isRecording ? stopRecording : startRecording}>
-        {isRecording ? "⬛" : "🔴"}
-      </Button>
-      {getRecordingLines()}
-      <StatusBar style="auto" />
+      <Button
+        style={styles.buttonOne}
+        onPress={isRecording ? stopRecording : startRecording}
+        accessoryLeft={() => (
+          <Entypo
+            name={
+              isRecording && recording ? "controller-stop" : "controller-record"
+            }
+            size={24}
+            color={isRecording ? "black" : "red"}
+          />
+        )}
+      ></Button>
+      <ScrollView style={{ flex: 1, width: "100%" }}>
+        {getRecordingLines()}
+        <StatusBar style="auto" />
+      </ScrollView>
+      {recordings.length > 0 && (
+        <Button
+          style={styles.buttonTwo}
+          onPress={clearRecordings}
+          appearance="ghost"
+        >
+          Clear Recordings
+        </Button>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     justifyContent: "center",
     backgroundColor: "#FFFFFF",
     padding: 1,
+  },
+  buttonOne: {
+    backgroundColor: "#FFFFFF",
+
+    marginBottom: 5,
+    height: 60,
+    borderRadius: 5,
+    width: 120,
+  },
+  button: { width: 120, height: 60 },
+  buttonTwo: {
+    marginTop: 10,
   },
 });
