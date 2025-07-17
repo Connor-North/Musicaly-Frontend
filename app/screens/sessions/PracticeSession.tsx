@@ -81,26 +81,23 @@ export default function PracticeSession() {
   const multilineInputState = useInputState();
   return (
     <>
-      <SafeAreaView
-        // className="justify-center flex-1 p-4"
-        style={styles.container}
-      >
-        <View style={{ maxHeight: screenHeight * 0.2 }}>
+      <SafeAreaView style={styles.container}>
+        {/* <View>
           <Text style={{ margin: 5 }} category="h6">
             Total Session Time: {sessionTime} minutes
           </Text>
-
+        </View> */}
+        <View style={styles.innerStyle}>
           <PSU
             unitId={unitId}
             unitComposer={unitComposer}
             unitTitle={unitTitle}
           />
         </View>
-        <View style={{ maxHeight: screenHeight * 0.2 }}>
+        <View>
           <Recording />
         </View>
-        <View style={{ maxHeight: screenHeight * 0.2 }}>
-          {/* <Text>&nbsp;</Text> */}
+        <View style={styles.innerStyle}>
           <Input
             multiline={true}
             textStyle={styles.inputTextStyle}
@@ -109,8 +106,7 @@ export default function PracticeSession() {
             value={note}
             onChangeText={(value) => setNote(value)}
           />
-          {/* <Text>&nbsp;</Text>
-          <Text>&nbsp;</Text> */}
+
           {note.length > 10 || unitTitle === "Free Play" ? (
             <>
               <Button
@@ -119,7 +115,7 @@ export default function PracticeSession() {
               >
                 Next Piece
               </Button>
-              {/* <Text>&nbsp;</Text> */}
+
               <Button
                 status="danger"
                 onPress={() => {
@@ -131,10 +127,10 @@ export default function PracticeSession() {
               </Button>
             </>
           ) : (
-            <Card style={{ width: 270 }}>
-              <Text status="primary" category="s2">
-                Remember to add a note before moving on.{"\n"}We learn quicker
-                with short reflections on each piece we practice. 🧠
+            <Card>
+              <Text status="primary" category="c2">
+                Remember to add a note before moving on. We learn quicker with
+                short reflections on each piece we practice. 🧠
               </Text>
             </Card>
           )}
@@ -153,13 +149,15 @@ const styles = StyleSheet.create({
   input: {
     marginVertical: 2,
   },
+  innerStyle: {
+    width: "80%",
+  },
   inputTextStyle: {
-    minHeight: 100,
+    maxHeight: 120,
     width: 240,
     padding: 0,
   },
   screenButton: {
     width: 240,
   },
-  // viewHeightThirty: { height: screenHeight * 0.3 },
 });

@@ -48,26 +48,35 @@ export default function PSU({ unitId, unitComposer, unitTitle }: PSUProps) {
       <Card>
         <Text category="h6">{unitTitle}</Text>
         <Text category="s1">{unitComposer}</Text>
-        <StopwatchTimer
-          ref={stopwatchRef}
-          containerStyle={styles.stopWatchContainer}
-          digitStyle={Platform.select({
-            ios: {
-              width: 32,
-            },
-            android: undefined,
-          })}
-          separatorStyle={Platform.select({
-            ios: {
-              width: 14,
-            },
-            android: undefined,
-          })}
-          textCharStyle={styles.stopWatchChar}
-          trailingZeros={0}
-        />
-        <View style={styles.buttonsContainer}>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            // alignContent: "center",
+            justifyContent: "space-evenly",
+          }}
+        >
+          <StopwatchTimer
+            ref={stopwatchRef}
+            containerStyle={styles.stopWatchContainer}
+            digitStyle={Platform.select({
+              ios: {
+                width: 32,
+              },
+              android: undefined,
+            })}
+            separatorStyle={Platform.select({
+              ios: {
+                width: 14,
+              },
+              android: undefined,
+            })}
+            textCharStyle={styles.stopWatchChar}
+            trailingZeros={0}
+          />
           <Button
+            size="small"
             onPress={() => {
               if (isRunning) {
                 stopwatchRef.current?.pause();
@@ -93,9 +102,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   stopWatchContainer: {
-    marginTop: 20,
     paddingVertical: 4,
-    paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 24,
@@ -104,10 +111,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     width: 240,
-    paddingTop: 18,
+    paddingTop: 11,
   },
   stopWatchChar: {
-    fontSize: 48,
+    fontSize: 40,
     fontWeight: "bold",
     letterSpacing: 1,
     color: "#0256FF",
