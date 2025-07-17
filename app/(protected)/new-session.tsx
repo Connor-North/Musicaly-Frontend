@@ -162,11 +162,11 @@ export default function NewSession() {
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
   return (
-    <ScrollView>
-      <SafeAreaView
-        className="justify-center flex-1 p-4"
-        style={styles.container}
-      >
+    <SafeAreaView
+      className="justify-center flex-1 p-4"
+      style={styles.container}
+    >
+      <View style={styles.list}>
         {/* TODO - Arrange items on page with layout containers */}
         <UnitList
           remountKey={remountKey}
@@ -175,160 +175,158 @@ export default function NewSession() {
             insertNewSession(item);
           }}
         />
-
+      </View>
+      <View>
         <Button style={styles.button} onPress={toggleModal}>
           Add New Piece
         </Button>
+      </View>
+      {/* <Button
+        style={styles.button}
+        onPress={() => {
+          router.push({
+            pathname: "/screens/sessions/PracticeSession",
+            params: {
+              title: "Free Play",
+              id: "",
+              composer: "Sight read, create, jam..!",
+            },
+          });
+        }}
+      >
+        Free Practice
+      </Button> */}
 
-        {/* <Button
-          style={styles.button}
-          onPress={() => {
-            router.push({
-              pathname: "/screens/sessions/PracticeSession",
-              params: {
-                title: "Free Play",
-                id: "",
-                composer: "Sight read, create, jam..!",
-              },
-            });
-          }}
-        >
-          Free Practice
-        </Button> */}
+      <Button style={styles.button} onPress={() => setQuizVisible(true)}>
+        Note Recognition Quiz
+      </Button>
 
-        <Button style={styles.button} onPress={() => setQuizVisible(true)}>
-          Note Recognition Quiz
-        </Button>
-
-        <Modal
-          visible={modalVisible}
-          animationType="slide"
-          presentationStyle="pageSheet"
-          onRequestClose={() => {
-            setModalVisible(false);
-          }}
-        >
-          <View style={styles.mainView}>
-            <View style={styles.view} className="p-12 rounded-lg bg-white">
-              <Text category="h3">
-                Please enter the details for the new piece you'd like to
-                practice.
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.mainView}>
+          <View style={styles.view} className="p-12 rounded-lg bg-white">
+            <Text category="h3">
+              Please enter the details for the new piece you'd like to practice.
+            </Text>
+            <Text>&nbsp;</Text>
+            <Input
+              placeholder={"Title"}
+              onChangeText={(text) => setTitle(text)}
+              value={title}
+            />
+            <Text>&nbsp;</Text>
+            <Input
+              placeholder={"Artist"}
+              onChangeText={(text) => setArtist(text)}
+              value={artist}
+            />
+            <Text>&nbsp;</Text>
+            <Text category="h6">
+              Is this piece part of your repertoire, or a technical exercise?
+            </Text>
+            <Text>&nbsp;</Text>
+            <RadioGroup
+              selectedIndex={selectedIndex}
+              onChange={(index) => setSelectedIndex(index)}
+            >
+              <Radio>Repertoire</Radio>
+              <Radio>Technical Exercises</Radio>
+            </RadioGroup>
+            <Text>&nbsp;</Text>
+            {title.length < 1 || artist.length < 1 ? (
+              <Text style={{ color: "red" }}>
+                Please ensure all fields are complete
               </Text>
-              <Text>&nbsp;</Text>
-              <Input
-                placeholder={"Title"}
-                onChangeText={(text) => setTitle(text)}
-                value={title}
-              />
-              <Text>&nbsp;</Text>
-              <Input
-                placeholder={"Artist"}
-                onChangeText={(text) => setArtist(text)}
-                value={artist}
-              />
-              <Text>&nbsp;</Text>
-              <Text category="h6">
-                Is this piece part of your repertoire, or a technical exercise?
-              </Text>
-              <Text>&nbsp;</Text>
-              <RadioGroup
-                selectedIndex={selectedIndex}
-                onChange={(index) => setSelectedIndex(index)}
+            ) : (
+              <Button
+                onPress={() => {
+                  insertUnit();
+                }}
               >
-                <Radio>Repertoire</Radio>
-                <Radio>Technical Exercises</Radio>
-              </RadioGroup>
-              <Text>&nbsp;</Text>
-              {title.length < 1 || artist.length < 1 ? (
-                <Text style={{ color: "red" }}>
-                  Please ensure all fields are complete
-                </Text>
-              ) : (
+                Let's practice!
+              </Button>
+            )}
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={quizVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={closeQuiz}
+      >
+        <View style={styles.mainView}>
+          <View style={styles.view} className="p-12 rounded-lg bg-white">
+            <Text category="h4">Question {quizStep + 1} of 5</Text>
+            <Text>&nbsp;</Text>
+            <Button onPress={() => playNote(quizQuestions[quizStep].file)}>
+              🔊 Play Note
+            </Button>
+            <Text>&nbsp;</Text>
+            {quizQuestions[quizStep].options.map((opt, index) => {
+              const isCorrect = opt.includes("✅");
+              const displayText = opt.replace(" ✅", "");
+              let status = "default";
+
+              if (selectedAnswer) {
+                if (selectedAnswer === displayText && isCorrect) {
+                  status = "success";
+                } else if (selectedAnswer === displayText && !isCorrect) {
+                  status = "danger";
+                } else if (isCorrect) {
+                  status = "success";
+                }
+              }
+
+              return (
                 <Button
+                  key={index}
+                  style={{ marginVertical: 4 }}
+                  status={status}
                   onPress={() => {
-                    insertUnit();
+                    if (!selectedAnswer) setSelectedAnswer(displayText);
                   }}
                 >
-                  Let's practice!
+                  {displayText}
                 </Button>
-              )}
-            </View>
+              );
+            })}
+            {selectedAnswer && (
+              <>
+                <Text>&nbsp;</Text>
+                <Button
+                  onPress={() => {
+                    if (quizStep < quizQuestions.length - 1) {
+                      setQuizStep(quizStep + 1);
+                      setSelectedAnswer(null);
+                    } else {
+                      closeQuiz();
+                      setSelectedAnswer(null);
+                    }
+                  }}
+                >
+                  {quizStep === quizQuestions.length - 1 ? "Finish" : "Next ➡️"}
+                </Button>
+              </>
+            )}
           </View>
-        </Modal>
-
-        <Modal
-          visible={quizVisible}
-          animationType="slide"
-          presentationStyle="pageSheet"
-          onRequestClose={closeQuiz}
-        >
-          <View style={styles.mainView}>
-            <View style={styles.view} className="p-12 rounded-lg bg-white">
-              <Text category="h4">Question {quizStep + 1} of 5</Text>
-              <Text>&nbsp;</Text>
-              <Button onPress={() => playNote(quizQuestions[quizStep].file)}>
-                🔊 Play Note
-              </Button>
-              <Text>&nbsp;</Text>
-              {quizQuestions[quizStep].options.map((opt, index) => {
-                const isCorrect = opt.includes("✅");
-                const displayText = opt.replace(" ✅", "");
-                let status = "default";
-
-                if (selectedAnswer) {
-                  if (selectedAnswer === displayText && isCorrect) {
-                    status = "success";
-                  } else if (selectedAnswer === displayText && !isCorrect) {
-                    status = "danger";
-                  } else if (isCorrect) {
-                    status = "success";
-                  }
-                }
-
-                return (
-                  <Button
-                    key={index}
-                    style={{ marginVertical: 4 }}
-                    status={status}
-                    onPress={() => {
-                      if (!selectedAnswer) setSelectedAnswer(displayText);
-                    }}
-                  >
-                    {displayText}
-                  </Button>
-                );
-              })}
-              {selectedAnswer && (
-                <>
-                  <Text>&nbsp;</Text>
-                  <Button
-                    onPress={() => {
-                      if (quizStep < quizQuestions.length - 1) {
-                        setQuizStep(quizStep + 1);
-                        setSelectedAnswer(null);
-                      } else {
-                        closeQuiz();
-                        setSelectedAnswer(null);
-                      }
-                    }}
-                  >
-                    {quizStep === quizQuestions.length - 1
-                      ? "Finish"
-                      : "Next ➡️"}
-                  </Button>
-                </>
-              )}
-            </View>
-          </View>
-        </Modal>
-      </SafeAreaView>
-    </ScrollView>
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "space-around",
     backgroundColor: "#ffffff",
   },
   button: { margin: 2, width: 200 },
@@ -342,10 +340,13 @@ const styles = StyleSheet.create({
     position: "relative",
     padding: "15%",
   },
-  mainView: {
-    justifyContent: "center",
-    alignItems: "center",
-    alignContent: "space-between",
-    flex: 1,
+  list: {
+    height: "70%",
   },
+  // mainView: {
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   alignContent: "space-between",
+  //   flex: 1,
+  // },
 });

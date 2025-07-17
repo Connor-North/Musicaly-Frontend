@@ -63,7 +63,7 @@ export default function RootLayout() {
       <IconRegistry icons={EvaIconsPack} />
       <ApplicationProvider {...eva} theme={eva.light}>
         <SessionProvider>
-          <Slot />;
+          <Slot />
         </SessionProvider>
       </ApplicationProvider>
     </SafeAreaProvider>

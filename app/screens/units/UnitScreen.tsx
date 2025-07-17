@@ -2,16 +2,11 @@ import { StyleSheet, View, Text } from "react-native";
 import React from "react";
 import { Card } from "@ui-kitten/components";
 
-type UnitCardProps = {
-  artist: string;
-  title: string;
-};
-
-export default function UnitCard({ artist, title }: UnitCardProps) {
+export default function UnitScreen() {
   return (
     <Card style={styles.card}>
-      <Text>{artist}</Text>
-      <Text>{title}</Text>
+      <Text></Text>
+      <Text></Text>
     </Card>
   );
 }

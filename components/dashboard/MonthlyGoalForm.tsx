@@ -212,91 +212,94 @@ export default function MonthlyGoalsForm() {
   }
 
   return (
-    <ScrollView>
-      <SafeAreaView style={styles.container}>
-        <Card style={styles.card}>
-          <Text style={styles.title}>Set and check your goals! 🎯</Text>
-          <Card style={styles.card}>
-            <View style={styles.inputContainer}>
-              <Text style={styles.item}>Set your weekly target</Text>
-              <Input
-                style={styles.input}
-                placeholder="Minutes"
-                value={newTarget}
-                onChangeText={(targetText) => handleTargetChange(targetText)}
-              />
-              <Button>Set</Button>
-            </View>
-          </Card>
-          <FlatList
-            data={data}
-            renderItem={({ item, index }) => (
-              <>
-                <View style={{ paddingVertical: 15 }}>
-                  <Text style={styles.item}>{item.goal_description}</Text>
-                  <View style={styles.progressRow}>
-                    <Button
-                      size="tiny"
-                      onPress={() => deleteGoal(index)}
-                      appearance="outline"
-                      status="danger"
-                    >
-                      ❌
-                    </Button>
-                    <Button
-                      style={{ marginHorizontal: 7 }}
-                      size="tiny"
-                      onPress={() => updateProgress(index, -1)}
-                    >
-                      -
-                    </Button>
-                    <ProgressBar
-                      style={styles.progressBar}
-                      animating={false}
-                      progress={item.goal_status / 5}
-                    />
-
-                    <Button
-                      size="tiny"
-                      onPress={() => updateProgress(index, 1)}
-                    >
-                      +
-                    </Button>
-                  </View>
-                  {item.goal_status === 5 ? (
-                    <View style={styles.successContainer}>
-                      <Text style={styles.success} status="success">
-                        You have reached your goal! 🎉
-                      </Text>
-                    </View>
-                  ) : (
-                    <View style={styles.successContainer}>
-                      <Text style={styles.success} status="success"></Text>
-                    </View>
-                  )}
-                </View>
-              </>
-            )}
-            keyExtractor={(item) => item.created_at}
-            ItemSeparatorComponent={() => (
-              <View style={{ height: 1, backgroundColor: "#ccc" }} />
-            )}
-          />
-
-          {newGoals.map((goal, index) => (
-            <View key={index} style={styles.inputContainer}>
-              <Input
-                placeholder={`Add goal #${data.length + index + 1}`}
-                value={goal}
-                onChangeText={(text) => handleInputChange(text, index)}
-                style={styles.input}
-              />
-              <Button onPress={() => addGoal(index)}>Add Goal!</Button>
-            </View>
-          ))}
+    // <ScrollView>
+    <SafeAreaView style={styles.container}>
+      <Card style={styles.card}>
+        <Text category="h4" style={styles.title}>
+          Set your goals! 🎯
+        </Text>
+        <Card style={styles.targetCard}>
+          <Text category="s2" style={styles.item}>
+            Set your weekly target
+          </Text>
+          <View style={styles.weeklyTargetBox}>
+            <Input
+              style={styles.input}
+              placeholder="Minutes"
+              value={newTarget}
+              onChangeText={(targetText) => handleTargetChange(targetText)}
+            />
+            <Button>Set</Button>
+          </View>
         </Card>
-      </SafeAreaView>
-    </ScrollView>
+        <FlatList
+          data={data}
+          renderItem={({ item, index }) => (
+            <>
+              <View style={{ paddingVertical: 15 }}>
+                <Text category="s2" style={styles.item}>
+                  {item.goal_description}
+                </Text>
+                <View style={styles.progressRow}>
+                  <Button
+                    size="tiny"
+                    onPress={() => deleteGoal(index)}
+                    appearance="outline"
+                    status="danger"
+                  >
+                    ❌
+                  </Button>
+                  <Button
+                    style={{ marginHorizontal: 7 }}
+                    size="tiny"
+                    onPress={() => updateProgress(index, -1)}
+                  >
+                    -
+                  </Button>
+                  <ProgressBar
+                    style={styles.progressBar}
+                    animating={false}
+                    progress={item.goal_status / 5}
+                  />
+
+                  <Button size="tiny" onPress={() => updateProgress(index, 1)}>
+                    +
+                  </Button>
+                </View>
+                {item.goal_status === 5 ? (
+                  <View style={styles.successContainer}>
+                    <Text style={styles.success} status="success">
+                      You have reached your goal! 🎉
+                    </Text>
+                  </View>
+                ) : (
+                  <View style={styles.successContainer}>
+                    <Text style={styles.success} status="success"></Text>
+                  </View>
+                )}
+              </View>
+            </>
+          )}
+          keyExtractor={(item) => item.created_at}
+          ItemSeparatorComponent={() => (
+            <View style={{ height: 1, backgroundColor: "#ccc" }} />
+          )}
+        />
+
+        {newGoals.map((goal, index) => (
+          <View key={index} style={styles.inputContainer}>
+            <Input
+              placeholder={`Add goal #${data.length + index + 1}`}
+              value={goal}
+              onChangeText={(text) => handleInputChange(text, index)}
+              style={styles.input}
+            />
+            <Button onPress={() => addGoal(index)}>Add Goal!</Button>
+          </View>
+        ))}
+      </Card>
+    </SafeAreaView>
+    // </ScrollView>
   );
 }
 
@@ -304,34 +307,40 @@ const styles = StyleSheet.create({
   container: {
     // width: "90%",
     flex: 1,
-    padding: 16,
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 5,
+    paddingBottom: 5,
     alignItems: "center",
   },
   card: {
     width: "90%",
-    marginVertical: 10,
-    padding: 15,
+    marginBottom: 5,
   },
-  targetCard: {},
-  header: {
-    fontSize: 20,
-    marginBottom: 20,
+  targetCard: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
     textAlign: "center",
+  },
+  weeklyTargetBox: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
-    fontSize: 30,
     textAlign: "center",
-    marginTop: 20,
-    fontWeight: "bold",
-
-    marginBottom: 20,
+    marginBottom: 5,
   },
   item: {
-    fontSize: 18,
-    paddingVertical: 8,
+    paddingBottom: 8,
+    textAlign: "center",
   },
   success: {
-    fontSize: 10,
+    fontSize: 15,
+    fontWeight: "bold",
     paddingVertical: 1,
   },
   successContainer: {
@@ -341,24 +350,24 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 10,
     alignItems: "center",
-  },
-  input: {
-    width: "90%",
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#999",
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    height: 40,
-    marginRight: 10,
-  },
-  progressBar: {
-    flex: 1,
-    height: 5,
+    width: "100%",
   },
   progressRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: 5,
+    width: "100%",
+  },
+  input: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: "#999",
+    borderRadius: 4,
+    paddingRight: 8,
+    height: 40,
+  },
+  progressBar: {
+    flex: 1,
+    height: 5,
   },
 });

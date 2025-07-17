@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View, Dimensions } from "react-native";
 import Metronome from "../../../components/Metronome";
 import { useState, useRef, useEffect, useContext } from "react";
 import { Layout, Button, Text, Card } from "@ui-kitten/components";
@@ -45,29 +45,38 @@ export default function PSU({ unitId, unitComposer, unitTitle }: PSUProps) {
 
   return (
     <View style={styles.container}>
-      <Card>
+      <Card style={{ width: 0.8 * screenWidth }}>
         <Text category="h6">{unitTitle}</Text>
         <Text category="s1">{unitComposer}</Text>
-        <StopwatchTimer
-          ref={stopwatchRef}
-          containerStyle={styles.stopWatchContainer}
-          digitStyle={Platform.select({
-            ios: {
-              width: 32,
-            },
-            android: undefined,
-          })}
-          separatorStyle={Platform.select({
-            ios: {
-              width: 14,
-            },
-            android: undefined,
-          })}
-          textCharStyle={styles.stopWatchChar}
-          trailingZeros={0}
-        />
-        <View style={styles.buttonsContainer}>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+
+            justifyContent: "space-evenly",
+          }}
+        >
+          <StopwatchTimer
+            ref={stopwatchRef}
+            containerStyle={styles.stopWatchContainer}
+            digitStyle={Platform.select({
+              ios: {
+                width: 32,
+              },
+              android: undefined,
+            })}
+            separatorStyle={Platform.select({
+              ios: {
+                width: 14,
+              },
+              android: undefined,
+            })}
+            textCharStyle={styles.stopWatchChar}
+            trailingZeros={0}
+          />
           <Button
+            size="small"
             onPress={() => {
               if (isRunning) {
                 stopwatchRef.current?.pause();
@@ -86,6 +95,9 @@ export default function PSU({ unitId, unitComposer, unitTitle }: PSUProps) {
     </View>
   );
 }
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -93,21 +105,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   stopWatchContainer: {
-    marginTop: 20,
     paddingVertical: 4,
-    paddingHorizontal: 8,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 24,
+    width: 110,
+    textAlign: "center",
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "center",
     width: 240,
-    paddingTop: 18,
+    paddingTop: 11,
   },
   stopWatchChar: {
-    fontSize: 48,
+    fontSize: 40,
     fontWeight: "bold",
     letterSpacing: 1,
     color: "#0256FF",
