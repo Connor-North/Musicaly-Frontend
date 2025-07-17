@@ -39,17 +39,17 @@ const StarRating = () => {
   }, []);
 
   if (rating === null) {
-    return <Text>Error loading ratings</Text>;
+    return <Text category="s2">Error loading ratings</Text>;
   }
 
   if (rating === 0) {
-    return <Text>No ratings yet</Text>;
+    return <Text category="s2">No ratings yet</Text>;
   }
 
   if (rating !== 0 || rating !== null) {
     return (
       <>
-        <Text>
+        <Text category="s2">
           Your session average this week is {Math.round(rating * 10) / 10}
         </Text>
         <StarRatingDisplay rating={rating} />

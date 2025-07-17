@@ -115,7 +115,7 @@ export default function WeeklyChart() {
     return (
       <View style={[styles.container, { flexDirection: "column" }]}>
         <Card style={styles.card}>
-          <Text>Just fetching your data...</Text>
+          <Text category="s2">Just fetching your data...</Text>
         </Card>
       </View>
     );
@@ -125,7 +125,7 @@ export default function WeeklyChart() {
     return (
       <View style={[styles.container, { flexDirection: "column" }]}>
         <Card style={styles.card}>
-          <Text>
+          <Text category="s2">
             Hey, there's nothing to show yet! Check your practice times here
             after you've practiced!
           </Text>
@@ -140,10 +140,10 @@ export default function WeeklyChart() {
         <Layout style={styles.topContainer} level="1">
           <Card style={styles.card}>
             <View style={styles.cardContent}>
-              <Text>Weekly practice log:</Text>
+              <Text category="s2">Weekly practice log</Text>
               <BarChart
                 data={barData}
-                width={screenWidth * 0.9}
+                width={screenWidth * 0.8}
                 height={screenHeight * 0.3}
                 withInnerLines={false}
                 yAxisLabel=""
@@ -163,14 +163,17 @@ export default function WeeklyChart() {
           <Card style={styles.card}>
             {target && actual ? (
               <View style={styles.cardContent}>
-                <Text style={{ textAlign: "center", marginBottom: 4 }}>
+                <Text
+                  category="s2"
+                  style={{ textAlign: "center", marginBottom: 4 }}
+                >
                   With {actual} minutes down you're at&nbsp;
                   {Math.round((actual / target) * 100)}% vs. your target this
                   week!
                 </Text>
               </View>
             ) : (
-              <Text>Set a target time to see your stats!</Text>
+              <Text category="s2">Set a target time to see your stats!</Text>
             )}
             <ProgressBar
               animating={false}
@@ -189,16 +192,19 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    // width: "90%",
+    marginVertical: 4,
   },
   topContainer: {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 24,
   },
   card: {
     width: "90%",
     marginVertical: 10,
-    padding: 15,
+    paddingVertical: 5,
   },
   cardContent: {
     width: "90%",
