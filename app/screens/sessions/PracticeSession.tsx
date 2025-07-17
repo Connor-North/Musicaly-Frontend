@@ -117,47 +117,49 @@ export default function PracticeSession() {
           { maxHeight: screenHeight * 0.3, width: screenWidth * 0.8 },
         ]}
       >
-        <Card>
-          <Input
-            multiline={true}
-            textStyle={styles.inputTextStyle}
-            placeholder="Add Notes"
-            {...multilineInputState}
-            value={note}
-            onChangeText={(value) => setNote(value)}
-            style={{ width: "100%" }}
-          />
-          <Text status="primary" category="c2">
-            Add a note before moving on. We learn quicker with short
-            reflections. 🧠
-          </Text>
-          {note.length > 10 || unitTitle === "Free Play" ? (
-            <View style={styles.innerDisplay}>
-              <View>
-                <Button
-                  status="danger"
-                  onPress={() => {
-                    handleSave(endSessionPath);
-                  }}
-                  style={styles.screenButton}
-                >
-                  Finish
-                </Button>
-              </View>
+        <View style={styles.recordingUnit}>
+          <Card>
+            <Input
+              multiline={true}
+              textStyle={styles.inputTextStyle}
+              placeholder="Add Notes"
+              {...multilineInputState}
+              value={note}
+              onChangeText={(value) => setNote(value)}
+              style={{ width: "100%" }}
+            />
+            <Text status="primary" category="c2">
+              Add a note before moving on. We learn quicker with short
+              reflections. 🧠
+            </Text>
+            {note.length > 10 || unitTitle === "Free Play" ? (
+              <View style={styles.innerDisplay}>
+                <View>
+                  <Button
+                    status="danger"
+                    onPress={() => {
+                      handleSave(endSessionPath);
+                    }}
+                    style={styles.screenButton}
+                  >
+                    Finish
+                  </Button>
+                </View>
 
-              <View>
-                <Button
-                  onPress={() => handleSave(nextSessionPath)}
-                  style={styles.screenButton}
-                >
-                  &nbsp;Next&nbsp;
-                </Button>
+                <View>
+                  <Button
+                    onPress={() => handleSave(nextSessionPath)}
+                    style={styles.screenButton}
+                  >
+                    &nbsp;Next&nbsp;
+                  </Button>
+                </View>
               </View>
-            </View>
-          ) : (
-            <View style={{ height: 52 }}></View>
-          )}
-        </Card>
+            ) : (
+              <View style={{ height: 52 }}></View>
+            )}
+          </Card>
+        </View>
       </View>
     </SafeAreaView>
   );

@@ -1,10 +1,18 @@
-import React, { useCallback, useState, useContext } from "react";
-import { StyleSheet, View } from "react-native";
-import { Text, Layout, Input, InputProps, Button } from "@ui-kitten/components";
+import React, { useState, useContext } from "react";
+import { StyleSheet, View, Dimensions } from "react-native";
+import {
+  Text,
+  Layout,
+  Input,
+  InputProps,
+  Button,
+  Card,
+} from "@ui-kitten/components";
 import { SessionTimeContext } from "@/assets/contexts/sessionTime";
 import { useRouter } from "expo-router";
 import Slider from "@react-native-community/slider";
 import { supabase } from "@/supabase/auth-helper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function EndScreen() {
   const router = useRouter();
@@ -66,69 +74,73 @@ export default function EndScreen() {
   }
 
   return (
-    <Layout style={styles.root}>
-      <Text category="h4">
-        Good job! You practiced for {Math.round(sessionTime)} minutes in this
-        session!
-      </Text>
-      <Text>&nbsp;</Text>
-      <Text>
-        Remember, it's not about streaks or going through the motions. It's
-        about quality. So, take the time to think about the following and make
-        some notes for next time:
-      </Text>
-      <Text>&nbsp;</Text>
-      <Text>🎉 - What can you celerate today?</Text>
-      <Text>🧠 - Where did you have to focus?</Text>
-      <Text>✅ - What could you aim for next?</Text>
-      <Text>🎯 - Are you meeting your goals?</Text>
-      <Text>&nbsp;</Text>
-      <View style={styles.root}>
-        <Input
-          multiline={true}
-          textStyle={styles.inputTextStyle}
-          placeholder="Add Notes"
-          {...multilineInputState}
-          value={note}
-          onChangeText={(value) => setNote(value)}
-        />
-
-        <Text>&nbsp;</Text>
-        <Text>Finally, on reflection ... rate your session.</Text>
-        <Text>&nbsp;</Text>
-        <Slider
-          style={{ width: 250 }}
-          minimumValue={0}
-          maximumValue={5}
-          thumbTintColor={"#3366ff"}
-          minimumTrackTintColor={"#A6C1FF"}
-          step={1}
-          renderStepNumber
-          onValueChange={(value) => {
-            setRating(value);
-          }}
-        />
-
-        <Button
-          style={{ marginTop: 50 }}
-          status="primary"
-          onPress={() => {
-            handleEndSession();
-          }}
-        >
-          End Session
-        </Button>
+    <SafeAreaView style={styles.container}>
+      <View style={[styles.innerStyle, { width: screenWidth * 0.8 }]}>
+        <Card>
+          <Text category="h6">
+            Good job!{"\n"}You practiced for {Math.round(sessionTime)} minutes
+            in this session! 👏
+          </Text>
+          <Text>&nbsp;</Text>
+          <Text category="s2">
+            Remember, it's not about streaks or going through the motions. It's
+            about quality. So, take the time to think about the following and
+            make some notes for next time:
+          </Text>
+          <Text>&nbsp;</Text>
+          <Text category="s2">🎉 - What can you celerate today?</Text>
+          <Text category="s2">🧠 - Where did you have to focus?</Text>
+          <Text category="s2">✅ - What could you aim for next?</Text>
+          <Text category="s2">🎯 - Are you meeting your goals?</Text>
+          <Text>&nbsp;</Text>
+        </Card>
       </View>
-    </Layout>
+      <View style={[styles.innerStyle, { width: screenWidth * 0.8 }]}>
+        <Card>
+          <Input
+            multiline={true}
+            textStyle={styles.inputTextStyle}
+            placeholder="Add Notes"
+            {...multilineInputState}
+            value={note}
+            onChangeText={(value) => setNote(value)}
+          />
+
+          <Text>&nbsp;</Text>
+          <Text category="s2">
+            Finally, on reflection ... rate your session.
+          </Text>
+          <Text>&nbsp;</Text>
+          <Slider
+            style={{ width: 250 }}
+            minimumValue={0}
+            maximumValue={5}
+            thumbTintColor={"#3366ff"}
+            minimumTrackTintColor={"#A6C1FF"}
+            step={1}
+            renderStepNumber
+            onValueChange={(value) => {
+              setRating(value);
+            }}
+          />
+
+          <Button
+            style={{ marginTop: 50 }}
+            status="primary"
+            onPress={() => {
+              handleEndSession();
+            }}
+          >
+            End Session
+          </Button>
+        </Card>
+      </View>
+    </SafeAreaView>
   );
 }
-
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   text: {
     fontSize: 17,
     marginTop: 20,
@@ -136,7 +148,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     alignItems: "center",
   },
   input: {
@@ -146,5 +158,8 @@ const styles = StyleSheet.create({
     minHeight: 200,
     width: 240,
     padding: 0,
+  },
+  innerStyle: {
+    alignItems: "center",
   },
 });

@@ -53,7 +53,9 @@ export default function Auth() {
     <View style={styles.container}>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <LogoLogin />
-        <Text style={styles.logo}>The music practice app</Text>
+        <Text category="s2" style={styles.logo}>
+          A musician's practice companion
+        </Text>
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         {!showCreate ? (
