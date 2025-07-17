@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Dimensions } from "react-native";
 import { Audio } from "expo-av";
 import { Button, Text } from "@ui-kitten/components";
 import { StatusBar } from "expo-status-bar";
@@ -114,7 +114,7 @@ export default function Recording() {
           <View
             style={{
               flexDirection: "row",
-              margin: 5,
+              marginVertical: 5,
               justifyContent: "space-between",
             }}
           >
@@ -184,8 +184,11 @@ export default function Recording() {
   );
 }
 
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   container: {
+    maxHeight: screenHeight * 0.25,
     flex: 1,
     justifyContent: "center",
     backgroundColor: "#FFFFFF",
@@ -194,7 +197,6 @@ const styles = StyleSheet.create({
   buttonOne: {
     backgroundColor: "#FFFFFF",
     width: 43,
-    marginLeft: 5,
   },
   buttonTwo: {
     marginTop: 10,

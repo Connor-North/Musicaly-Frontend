@@ -80,24 +80,29 @@ export default function PracticeSession() {
   };
   const multilineInputState = useInputState();
   return (
-    <>
-      <SafeAreaView style={styles.container}>
-        {/* <View>
+    <SafeAreaView style={styles.container}>
+      {/* <View>
           <Text style={{ margin: 5 }} category="h6">
             Total Session Time: {sessionTime} minutes
           </Text>
         </View> */}
-        <View style={styles.innerStyle}>
-          <PSU
-            unitId={unitId}
-            unitComposer={unitComposer}
-            unitTitle={unitTitle}
-          />
+      <View style={[styles.innerStyle, { maxHeight: screenHeight * 0.3 }]}>
+        <PSU
+          unitId={unitId}
+          unitComposer={unitComposer}
+          unitTitle={unitTitle}
+        />
+      </View>
+      <View style={[styles.innerStyle, { maxHeight: screenHeight * 0.3 }]}>
+        <View style={styles.recordingUnit}>
+          <Card>
+            <Text category="s2">Recordings</Text>
+            <Recording />
+          </Card>
         </View>
-        <View>
-          <Recording />
-        </View>
-        <View style={styles.innerStyle}>
+      </View>
+      <View style={[styles.innerStyle, { maxHeight: screenHeight * 0.3 }]}>
+        <Card>
           <Input
             multiline={true}
             textStyle={styles.inputTextStyle}
@@ -105,18 +110,14 @@ export default function PracticeSession() {
             {...multilineInputState}
             value={note}
             onChangeText={(value) => setNote(value)}
+            style={{ width: "100%" }}
           />
-
+          <Text status="primary" category="c2">
+            Add a note before moving on. We learn quicker with short
+            reflections. 🧠
+          </Text>
           {note.length > 10 || unitTitle === "Free Play" ? (
             <View style={styles.innerDisplay}>
-              <View>
-                <Button
-                  onPress={() => handleSave(nextSessionPath)}
-                  style={styles.screenButton}
-                >
-                  Next Piece
-                </Button>
-              </View>
               <View>
                 <Button
                   status="danger"
@@ -125,23 +126,29 @@ export default function PracticeSession() {
                   }}
                   style={styles.screenButton}
                 >
-                  End Session
+                  Finish
+                </Button>
+              </View>
+              <View>
+                <Button
+                  onPress={() => handleSave(nextSessionPath)}
+                  style={styles.screenButton}
+                >
+                  &nbsp;Next&nbsp;
                 </Button>
               </View>
             </View>
           ) : (
-            <Card>
-              <Text status="primary" category="c2">
-                Remember to add a note before moving on. We learn quicker with
-                short reflections on each piece we practice. 🧠
-              </Text>
-            </Card>
+            <View style={{ height: 52 }}></View>
           )}
-        </View>
-      </SafeAreaView>
-    </>
+        </Card>
+      </View>
+    </SafeAreaView>
   );
 }
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -153,21 +160,24 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   innerStyle: {
-    width: "80%",
-  },
-  innerDisplay: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "column",
+    width: screenWidth * 0.8,
     alignItems: "center",
   },
+  recordingUnit: {
+    width: screenWidth * 0.8,
+  },
+  innerDisplay: {
+    width: screenWidth,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
   inputTextStyle: {
-    maxHeight: 200,
-    width: 240,
+    height: 80,
     padding: 0,
   },
   screenButton: {
-    width: 140,
     marginTop: 10,
   },
 });

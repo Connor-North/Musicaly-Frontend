@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View, Dimensions } from "react-native";
 import Metronome from "../../../components/Metronome";
 import { useState, useRef, useEffect, useContext } from "react";
 import { Layout, Button, Text, Card } from "@ui-kitten/components";
@@ -95,6 +95,9 @@ export default function PSU({ unitId, unitComposer, unitTitle }: PSUProps) {
     </View>
   );
 }
+
+const screenWidth = Dimensions.get("window").width;
+const screenHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
