@@ -207,21 +207,21 @@ export default function MonthlyGoalsForm() {
   }
 
   if (!newGoals) {
-    console.log("LOADING");
+    console.log("Loading");
     return <Text>Loading...</Text>;
   }
 
   return (
     <ScrollView>
       <SafeAreaView style={styles.container}>
-        <Card style={styles.targetCard}>
+        <Card style={styles.card}>
           <Text style={styles.title}>Set and check your goals! 🎯</Text>
           <Card style={styles.card}>
             <View style={styles.inputContainer}>
               <Text style={styles.item}>Set your weekly target</Text>
               <Input
                 style={styles.input}
-                placeholder="Insert your target"
+                placeholder="Minutes"
                 value={newTarget}
                 onChangeText={(targetText) => handleTargetChange(targetText)}
               />
