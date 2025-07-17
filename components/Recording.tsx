@@ -17,10 +17,8 @@ export default function Recording() {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [recordings, setRecordings] = useState<SingleRecording[]>([]);
   const [permissionResponse, requestPermission] = Audio.usePermissions();
-  const [message, setMessage] = useState("");
   const [startTime, setStartTime] = useState<number | null>(null);
   const [stopTime, setStopTime] = useState<number | null>(null);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   useEffect(() => {
     if (startTime !== null) {
