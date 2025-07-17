@@ -45,7 +45,7 @@ export default function PSU({ unitId, unitComposer, unitTitle }: PSUProps) {
 
   return (
     <View style={styles.container}>
-      <Card>
+      <Card style={{ width: 0.8 * screenWidth }}>
         <Text category="h6">{unitTitle}</Text>
         <Text category="s1">{unitComposer}</Text>
         <View

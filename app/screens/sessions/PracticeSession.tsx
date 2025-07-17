@@ -86,14 +86,24 @@ export default function PracticeSession() {
             Total Session Time: {sessionTime} minutes
           </Text>
         </View> */}
-      <View style={[styles.innerStyle, { maxHeight: screenHeight * 0.3 }]}>
+      <View
+        style={[
+          styles.innerStyle,
+          { maxHeight: screenHeight * 0.3, width: screenWidth * 0.8 },
+        ]}
+      >
         <PSU
           unitId={unitId}
           unitComposer={unitComposer}
           unitTitle={unitTitle}
         />
       </View>
-      <View style={[styles.innerStyle, { maxHeight: screenHeight * 0.3 }]}>
+      <View
+        style={[
+          styles.innerStyle,
+          { maxHeight: screenHeight * 0.3, width: screenWidth * 0.8 },
+        ]}
+      >
         <View style={styles.recordingUnit}>
           <Card>
             <Text category="s2">Recordings</Text>
@@ -101,7 +111,12 @@ export default function PracticeSession() {
           </Card>
         </View>
       </View>
-      <View style={[styles.innerStyle, { maxHeight: screenHeight * 0.3 }]}>
+      <View
+        style={[
+          styles.innerStyle,
+          { maxHeight: screenHeight * 0.3, width: screenWidth * 0.8 },
+        ]}
+      >
         <Card>
           <Input
             multiline={true}
@@ -129,6 +144,7 @@ export default function PracticeSession() {
                   Finish
                 </Button>
               </View>
+
               <View>
                 <Button
                   onPress={() => handleSave(nextSessionPath)}
@@ -160,14 +176,12 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   innerStyle: {
-    width: screenWidth * 0.8,
     alignItems: "center",
   },
   recordingUnit: {
     width: screenWidth * 0.8,
   },
   innerDisplay: {
-    width: screenWidth,
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
