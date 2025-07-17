@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { supabase } from "../supabase/auth-helper";
 import { Button, Input, Text } from "@ui-kitten/components";
+import LogoLogin from "./LogoLogin";
 // import { Button, TextInput, Text } from "react-native";
 
 export default function Auth() {
@@ -51,7 +52,8 @@ export default function Auth() {
   return (
     <View style={styles.container}>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Text>Musically</Text>
+        <LogoLogin />
+        <Text style={styles.logo}>The music practice app</Text>
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         {!showCreate ? (
@@ -133,5 +135,8 @@ const styles = StyleSheet.create({
   },
   mt20: {
     marginTop: 20,
+  },
+  logo: {
+    textAlign: "center",
   },
 });
