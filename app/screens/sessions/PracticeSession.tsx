@@ -108,24 +108,27 @@ export default function PracticeSession() {
           />
 
           {note.length > 10 || unitTitle === "Free Play" ? (
-            <>
-              <Button
-                onPress={() => handleSave(nextSessionPath)}
-                style={styles.screenButton}
-              >
-                Next Piece
-              </Button>
-
-              <Button
-                status="danger"
-                onPress={() => {
-                  handleSave(endSessionPath);
-                }}
-                style={styles.screenButton}
-              >
-                End Session
-              </Button>
-            </>
+            <View style={styles.innerDisplay}>
+              <View>
+                <Button
+                  onPress={() => handleSave(nextSessionPath)}
+                  style={styles.screenButton}
+                >
+                  Next Piece
+                </Button>
+              </View>
+              <View>
+                <Button
+                  status="danger"
+                  onPress={() => {
+                    handleSave(endSessionPath);
+                  }}
+                  style={styles.screenButton}
+                >
+                  End Session
+                </Button>
+              </View>
+            </View>
           ) : (
             <Card>
               <Text status="primary" category="c2">
@@ -152,12 +155,19 @@ const styles = StyleSheet.create({
   innerStyle: {
     width: "80%",
   },
+  innerDisplay: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
   inputTextStyle: {
-    maxHeight: 120,
+    maxHeight: 200,
     width: 240,
     padding: 0,
   },
   screenButton: {
-    width: 240,
+    width: 140,
+    marginTop: 10,
   },
 });
