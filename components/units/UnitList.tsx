@@ -104,22 +104,22 @@ export default function UnitList({
         value={query}
         onChangeText={setQuery}
       />
-      <View
+      {/* <View
         style={[
           {
-            height: screenHeight * 0.4,
+            height: screenHeight * 0.5,
             width: screenWidth * 0.9,
           },
         ]}
-      >
-        <List
-          data={filteredListData}
-          renderItem={renderListItem}
-          ItemSeparatorComponent={() => (
-            <View style={{ height: 1, backgroundColor: "#ccc" }} />
-          )}
-        />
-      </View>
+      > */}
+      <List
+        data={filteredListData}
+        renderItem={renderListItem}
+        ItemSeparatorComponent={() => (
+          <View style={{ height: 1, backgroundColor: "#ccc" }} />
+        )}
+      />
+      {/* </View> */}
     </View>
   );
 }
