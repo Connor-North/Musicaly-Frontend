@@ -1,6 +1,6 @@
 import { Button, Input, InputProps, Text, Card } from "@ui-kitten/components";
 import { useState, useContext, useRef, useEffect } from "react";
-import { StyleSheet, ScrollView } from "react-native";
+import { StyleSheet, ScrollView, View, Dimensions } from "react-native";
 import PSU from "./PSU";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -31,7 +31,7 @@ export default function PracticeSession() {
   const endSessionPath = "/screens/sessions/EndSession";
 
   const unitTimeRef = useRef(unitTime);
-
+  const screenHeight = Dimensions.get("window").height;
   useEffect(() => {
     unitTimeRef.current = unitTime;
   }, [unitTime]);
@@ -82,58 +82,63 @@ export default function PracticeSession() {
   return (
     <>
       <SafeAreaView
-        className="justify-center flex-1 p-4"
+        // className="justify-center flex-1 p-4"
         style={styles.container}
       >
-        <Text style={{ margin: 20 }} category="h6">
-          Total Session Time: {sessionTime} minutes
-        </Text>
+        <View style={{ maxHeight: screenHeight * 0.2 }}>
+          <Text style={{ margin: 5 }} category="h6">
+            Total Session Time: {sessionTime} minutes
+          </Text>
 
-        <PSU
-          unitId={unitId}
-          unitComposer={unitComposer}
-          unitTitle={unitTitle}
-        />
-        <Recording />
-        <Text>&nbsp;</Text>
-        <Input
-          multiline={true}
-          textStyle={styles.inputTextStyle}
-          placeholder="Add Notes"
-          {...multilineInputState}
-          value={note}
-          onChangeText={(value) => setNote(value)}
-        />
-        <Text>&nbsp;</Text>
-
-        <Text>&nbsp;</Text>
-        {note.length > 10 || unitTitle === "Free Play" ? (
-          <>
-            <Button
-              onPress={() => handleSave(nextSessionPath)}
-              style={styles.screenButton}
-            >
-              Next Piece
-            </Button>
-            <Text>&nbsp;</Text>
-            <Button
-              status="danger"
-              onPress={() => {
-                handleSave(endSessionPath);
-              }}
-              style={styles.screenButton}
-            >
-              End Session
-            </Button>
-          </>
-        ) : (
-          <Card style={{ width: 270 }}>
-            <Text status="primary" category="h6">
-              Remember to add a note before moving on.{"\n"}We learn quicker
-              with short reflections on each piece we practice. 🧠
-            </Text>
-          </Card>
-        )}
+          <PSU
+            unitId={unitId}
+            unitComposer={unitComposer}
+            unitTitle={unitTitle}
+          />
+        </View>
+        <View style={{ maxHeight: screenHeight * 0.2 }}>
+          <Recording />
+        </View>
+        <View style={{ maxHeight: screenHeight * 0.2 }}>
+          {/* <Text>&nbsp;</Text> */}
+          <Input
+            multiline={true}
+            textStyle={styles.inputTextStyle}
+            placeholder="Add Notes"
+            {...multilineInputState}
+            value={note}
+            onChangeText={(value) => setNote(value)}
+          />
+          {/* <Text>&nbsp;</Text>
+          <Text>&nbsp;</Text> */}
+          {note.length > 10 || unitTitle === "Free Play" ? (
+            <>
+              <Button
+                onPress={() => handleSave(nextSessionPath)}
+                style={styles.screenButton}
+              >
+                Next Piece
+              </Button>
+              {/* <Text>&nbsp;</Text> */}
+              <Button
+                status="danger"
+                onPress={() => {
+                  handleSave(endSessionPath);
+                }}
+                style={styles.screenButton}
+              >
+                End Session
+              </Button>
+            </>
+          ) : (
+            <Card style={{ width: 270 }}>
+              <Text status="primary" category="s2">
+                Remember to add a note before moving on.{"\n"}We learn quicker
+                with short reflections on each piece we practice. 🧠
+              </Text>
+            </Card>
+          )}
+        </View>
       </SafeAreaView>
     </>
   );
@@ -142,7 +147,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     alignItems: "center",
   },
   input: {
@@ -156,4 +161,5 @@ const styles = StyleSheet.create({
   screenButton: {
     width: 240,
   },
+  // viewHeightThirty: { height: screenHeight * 0.3 },
 });
