@@ -1,12 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, Text, Input, Button, ProgressBar } from "@ui-kitten/components";
-import {
-  SafeAreaView,
-  FlatList,
-  StyleSheet,
-  View,
-  Pressable,
-} from "react-native";
+import { SafeAreaView, FlatList, StyleSheet, View } from "react-native";
+import { supabase } from "@/supabase/auth-helper";
+
+// render goals list from returned data
+// check list initially has 5 empty goals
+// implement logic to add a new goal (onPress ====> INSERT) | add created_at
 
 interface Goal {
   id?: string;
@@ -15,42 +14,48 @@ interface Goal {
   goal_date: string;
   goal_status: number;
   created_at: string;
+  updated_at: string;
 }
 
-const initialGoals: Goal[] = [
-  {
-    id: "dd59c8c7-a8a1-4b65-9db2-5d787ab1dd4d",
-    student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044f",
-    goal_description: "play all 4 grade pieces to 75% tempo",
-    goal_date: "2025-08-21T12:04:28.149551+00:00",
-    goal_status: 2,
-    created_at: "2025-07-05T12:04:29.149551+00:00",
-  },
-  {
-    id: "dd59c8c7-a8a1-4b65-9db2-5d787ab1dd4d",
-    student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044f",
-    goal_description: "play section B invention no. 8 LH only",
-    goal_date: "2025-07-12T12:04:28.149551+00:00",
-    goal_status: 4,
-    created_at: "2025-07-05T12:04:27.149551+00:00",
-  },
-  {
-    id: "dd59c8c7-a8a1-4b65-9db2-5d787ab1dd4d",
-    student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044f",
-    goal_description: "play section B invention no. 8 RH only",
-    goal_date: "2025-07-19T12:04:28.149551+00:00",
-    goal_status: 4,
-    created_at: "2025-07-05T12:04:28.149551+00:00",
-  },
-];
+let initialGoals: Goal[] = [];
 
 export default function MonthlyGoalsForm() {
-  // NOTE - do I need to count goal count?
   const [data, setData] = useState<Goal[]>(initialGoals);
   const [goalCount, setGoalCount] = useState(data.length);
   const [newGoals, setNewGoals] = useState<string[]>(
     Array(5 - data.length).fill("")
   );
+  console.log(initialGoals.length);
+  console.log(data.length);
+
+  useEffect(() => {
+    async function getGoalsForCurrentUser() {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        const { data, error } = await supabase
+          .from("student_monthly_goals")
+          .select("*")
+          .lt("goal_status", 5)
+          .eq("student_id", user?.id);
+
+        if (error) {
+          console.error("Error fetching units:", error.message);
+          // TODO - Deal with error handling
+          return;
+        }
+
+        if (data) {
+          setData(data);
+          console.log("Units for current user:", data);
+        }
+      } catch (error) {
+        console.error("Error fetching units:", error);
+      }
+    }
+    getGoalsForCurrentUser();
+  }, []);
 
   const handleInputChange = (text: string, index: number) => {
     const updated = [...newGoals];
@@ -58,50 +63,198 @@ export default function MonthlyGoalsForm() {
     setNewGoals(updated);
   };
 
+  //Handler for adding progress
+  async function updateProgress(index: number, amount: number) {
+    let goalStatus;
+    setData((currentData) => {
+      const updated = [...currentData];
+      const goal = { ...updated[index] };
+      console.log(goal);
+      goal.goal_status = goal.goal_status + amount;
+      if (goal.goal_status > 5) {
+        goal.goal_status = 5;
+      } else if (goal.goal_status < 0) {
+        goal.goal_status = 0;
+      }
+      updated[index] = goal;
+      goalStatus = goal;
+      return updated;
+    });
+    try {
+      const { error, data } = await supabase
+        .from("student_monthly_goals")
+        .update([{ goal_status: goalStatus.goal_status }])
+        .eq("id", goalStatus.id)
+        .select("goal_status");
+      if (error) {
+        console.error("Progress not updated", error);
+      }
+      if (data) {
+        console.log("Progress updated successfully", data);
+      }
+    } catch (error) {
+      console.error("there was a problem updating your progress");
+      setData((currentData) => {
+        const updated = [...currentData];
+        const goal = { ...updated[index] };
+        console.log(goal);
+        goal.goal_status = goal.goal_status + amount;
+        if (goal.goal_status > 5) {
+          goal.goal_status = 5;
+        } else if (goal.goal_status < 0) {
+          goal.goal_status = 0;
+        }
+        updated[index] = goal;
+        goalStatus = goal;
+        return updated;
+      });
+    }
+  }
+
   // Handler for adding a new goal
-  const addGoal = (index: number) => {
+  async function addGoal(index: number) {
     const goalText: string = newGoals[index].trim();
     if (goalText.length < 5) {
       alert("Please write at least 5 characters");
       return;
     }
 
-    const newGoal: Goal = {
-      id: Math.random().toString(),
-      student_id: "832d2edd-ebf0-48e2-8421-5fb72e9b044z", // FIXME - replace with actual value, extract from data, or from session object of Supabase session?
-      goal_description: goalText,
-      goal_date: new Date().toISOString(), //FIXME - Is this valid date format for Supabase TimeStampZ - check vs reference object
-      goal_status: 0, // Set at 0, as new goal will be unstarted...?
-      created_at: new Date().toISOString(), //FIXME - Is this valid date format for Supabase TimeStampZ
-    };
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      const { data, error } = await supabase
+        .from("student_monthly_goals")
+        .insert([
+          {
+            student_id: user?.id,
+            goal_description: goalText,
+            goal_status: 0,
+            goal_date: null,
+            created_at: new Date().toLocaleString("en-US", {
+              timeZone: "Europe/London",
+            }),
+          },
+        ])
+        .select("*");
 
-    setData((currentData) => {
-      const updatedData = [...currentData, newGoal];
-      return updatedData;
-    });
+      if (error) {
+        console.error("Error inserting goal:", error.message);
 
-    setNewGoals((currentGoals) => {
-      const updatedNewGoals = [...currentGoals];
-      updatedNewGoals.splice(index, 1);
-      return updatedNewGoals;
-    });
+        return;
+      }
 
-    //NOTE - Consider - handle logic here for updating on Supabase? Or render all locally and handle elsewhere?
-  };
+      if (data) {
+        console.log("New goal inserted:", data[0]);
+        const newGoal = data[0];
+        setData((currentData) => {
+          const updatedData = [...currentData, newGoal];
+          return updatedData;
+        });
+
+        setNewGoals((currentGoals) => {
+          const updatedNewGoals = [...currentGoals];
+          updatedNewGoals[index] = "";
+          return updatedNewGoals;
+        });
+      }
+    } catch (error) {
+      console.error("Error inserting goal:", error);
+    }
+  }
+  useEffect(() => {
+    const remainingInputs = 5 - data.length;
+
+    if (remainingInputs > 0) {
+      setNewGoals((currentInputs) => {
+        const updated = [...currentInputs.slice(0, remainingInputs)];
+        const extraInputs = Array(remainingInputs - updated.length).fill("");
+        return [...updated, ...extraInputs];
+      });
+    } else {
+      setNewGoals([]);
+    }
+  }, [data]);
+
+  async function deleteGoal(index: number) {
+    const goalToDelete = data[index];
+    console.log(goalToDelete);
+    try {
+      const { error, data } = await supabase
+        .from("student_monthly_goals")
+        .delete()
+        .eq("id", goalToDelete.id)
+        .select();
+      if (error) {
+        console.error("Failed to delete goal");
+        return;
+      }
+      if (data) {
+        setData((currentData) => {
+          const updated = [...currentData];
+          updated.splice(index, 1);
+          return updated;
+        });
+        console.log("Goal deleted successfully");
+      }
+    } catch (error) {
+      console.error("An error occurred while deleting the goal", error);
+    }
+  }
+
+  //NOTE - Consider - handle logic here for updating on Supabase? Or render all locally and handle elsewhere?
+
+  if (!newGoals) {
+    console.log("LOADING!!!!!!!!!!!!!!!!");
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <Card style={styles.card}>
         <FlatList
           data={data}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <>
-              <Text style={styles.item}>{item.goal_description}</Text>
-              <View>
-                <ProgressBar
-                  animating={false}
-                  progress={item.goal_status / 5}
-                />
+              <View style={{ paddingVertical: 15 }}>
+                <Text style={styles.item}>{item.goal_description}</Text>
+                <View style={styles.progressRow}>
+                  <Button
+                    size="tiny"
+                    onPress={() => deleteGoal(index)}
+                    appearance="outline"
+                    status="danger"
+                  >
+                    ❌
+                  </Button>
+                  <Button
+                    style={{ marginHorizontal: 7 }}
+                    size="tiny"
+                    onPress={() => updateProgress(index, -1)}
+                  >
+                    -
+                  </Button>
+                  <ProgressBar
+                    style={styles.progressBar}
+                    animating={false}
+                    progress={item.goal_status / 5}
+                  />
+
+                  <Button size="tiny" onPress={() => updateProgress(index, 1)}>
+                    +
+                  </Button>
+                </View>
+                {item.goal_status === 5 ? (
+                  <View style={styles.successContainer}>
+                    <Text style={styles.success} status="success">
+                      You have reached your goal! 🎉
+                    </Text>
+                  </View>
+                ) : (
+                  <View style={styles.successContainer}>
+                    <Text style={styles.success} status="success"></Text>
+                  </View>
+                )}
               </View>
             </>
           )}
@@ -150,12 +303,19 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 20,
     fontWeight: "bold",
-    textDecorationLine: "underline",
+
     marginBottom: 20,
   },
   item: {
     fontSize: 18,
     paddingVertical: 8,
+  },
+  success: {
+    fontSize: 10,
+    paddingVertical: 1,
+  },
+  successContainer: {
+    alignItems: "center",
   },
   inputContainer: {
     flexDirection: "row",
@@ -170,5 +330,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     height: 40,
     marginRight: 10,
+  },
+  progressBar: {
+    flex: 1,
+    height: 5,
+  },
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
   },
 });
