@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { View, StyleSheet, Text, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { Audio } from "expo-av";
-import { Button } from "@ui-kitten/components";
+import { Button, Text } from "@ui-kitten/components";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -103,31 +103,39 @@ export default function Recording() {
     const totalSeconds = seconds % 60;
     return `${minutes}:${totalSeconds.toString().padStart(2, "0")}`;
   }
-  //  async function
+
   function getRecordingLines() {
     return recordings.map((recordingLine, index) => {
       return (
         <View key={index}>
-          <Text>
+          <Text category="s2">
             Recording {index + 1} - {recordingLine.duration}
           </Text>
-          <View style={{ flexDirection: "row" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              margin: 5,
+              justifyContent: "space-between",
+            }}
+          >
             <Button
-              style={styles.button}
+              size="small"
               onPress={() => recordingLine.sound.replayAsync()}
             >
-              Play
+              ▶
             </Button>
-            <View style={{ padding: 5 }}>
-              <Button
-                onPress={() => {
-                  clearRecording(index);
-                }}
-                accessoryLeft={() => (
-                  <AntDesign name="delete" size={24} color="black" />
-                )}
-              ></Button>
-            </View>
+
+            <Button
+              size="small"
+              appearance="outline"
+              status="danger"
+              onPress={() => {
+                clearRecording(index);
+              }}
+              accessoryLeft={() => (
+                <AntDesign name="delete" size={20} color="red" />
+              )}
+            ></Button>
           </View>
         </View>
       );
@@ -145,29 +153,30 @@ export default function Recording() {
   }
   return (
     <View style={styles.container}>
-      <Button
-        style={styles.buttonOne}
-        onPress={isRecording ? stopRecording : startRecording}
-        accessoryLeft={() => (
-          <Entypo
-            name={
-              isRecording && recording ? "controller-stop" : "controller-record"
-            }
-            size={24}
-            color={isRecording ? "black" : "red"}
-          />
-        )}
-      ></Button>
+      <View>
+        <Button
+          size="small"
+          style={styles.buttonOne}
+          onPress={isRecording ? stopRecording : startRecording}
+          accessoryLeft={() => (
+            <Entypo
+              name={
+                isRecording && recording
+                  ? "controller-stop"
+                  : "controller-record"
+              }
+              size={24}
+              color={isRecording ? "black" : "red"}
+            />
+          )}
+        ></Button>
+      </View>
       <ScrollView style={{ flex: 1, width: "100%" }}>
         {getRecordingLines()}
         <StatusBar style="auto" />
       </ScrollView>
       {recordings.length > 0 && (
-        <Button
-          style={styles.buttonTwo}
-          onPress={clearRecordings}
-          appearance="ghost"
-        >
+        <Button size="small" onPress={clearRecordings} appearance="ghost">
           Clear Recordings
         </Button>
       )}
@@ -184,13 +193,9 @@ const styles = StyleSheet.create({
   },
   buttonOne: {
     backgroundColor: "#FFFFFF",
-
-    marginBottom: 5,
-    height: 60,
-    borderRadius: 5,
-    width: 120,
+    width: 43,
+    marginLeft: 5,
   },
-  button: { width: 120, height: 60 },
   buttonTwo: {
     marginTop: 10,
   },
