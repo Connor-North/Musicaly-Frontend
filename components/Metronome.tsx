@@ -52,39 +52,57 @@ const Metronome: React.FC<MetronomeProps> = ({
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>BPM: {bpm}</Text>
-      <Slider
-        style={{ width: 250 }}
-        minimumValue={40}
-        maximumValue={240}
-        value={bpm}
-        thumbTintColor={"#3366ff"}
-        minimumTrackTintColor={"#A6C1FF"}
-        onValueChange={(value) => {
-          setBpm(Math.round(value));
-        }}
-        onSlidingComplete={(value) => {
-          const newBpm = Math.round(value);
-          setBpm(newBpm);
+      <View>
+        <Slider
+          style={{ width: 250, marginVertical: 10 }}
+          minimumValue={40}
+          maximumValue={240}
+          value={bpm}
+          thumbTintColor={"#3366ff"}
+          minimumTrackTintColor={"#A6C1FF"}
+          onValueChange={(value) => {
+            setBpm(Math.round(value));
+          }}
+          onSlidingComplete={(value) => {
+            const newBpm = Math.round(value);
+            setBpm(newBpm);
 
-          if (isPlaying) {
-            stopMetronome();
-            startMetronome();
-          }
-        }}
-      />
-      <Button onPress={toggleMetronome}>{isPlaying ? "Stop" : "Start"}</Button>
+            if (isPlaying) {
+              stopMetronome();
+              startMetronome();
+            }
+          }}
+        />
+      </View>
+      <View style={styles.inner}>
+        <Text category="s1" style={{ width: 110, textAlign: "center" }}>
+          BPM: {bpm}
+        </Text>
+        <Button size="small" onPress={toggleMetronome}>
+          {!isPlaying ? "▶" : "||"}
+        </Button>
+      </View>
     </View>
   );
 };
 export default Metronome;
 const styles = StyleSheet.create({
   container: {
+    display: "flex",
+    flexDirection: "column",
     alignItems: "center",
-    gap: 16,
+    backgroundColor: "#f2f4f7",
+    borderRadius: 15,
+    paddingHorizontal: 5,
+    paddingBottom: 5,
+    width: "auto",
+    marginVertical: 2,
   },
-  label: {
-    fontSize: 18,
-    marginBottom: 8,
+  inner: {
+    display: "flex",
+    width: 250,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
   },
 });

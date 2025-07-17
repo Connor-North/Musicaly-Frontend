@@ -53,7 +53,7 @@ export default function PSU({ unitId, unitComposer, unitTitle }: PSUProps) {
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            // alignContent: "center",
+
             justifyContent: "space-evenly",
           }}
         >
@@ -105,7 +105,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 24,
+    width: 110,
+    textAlign: "center",
   },
   buttonsContainer: {
     flexDirection: "row",
